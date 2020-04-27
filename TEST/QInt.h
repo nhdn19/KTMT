@@ -6,20 +6,30 @@
 
 using namespace std;
 
+
+
 class QInt
 {
 private:
 	int data[4];
 
 public:
-	QInt();
-	~QInt();
 
-	int divBy2(string &s);
+	void OffBit();
+	void SetBit(int i);
+	bool GetBit(int i);
 
-	//QInt& operator = (const string&);
+	bool DivideByTwo(string& s);
+	void MultiplyByTwo(string& s);
+	void StringSum(string& s);
 
-	friend istream& operator >> (istream&, QInt&);
+	void ScanBinString(string);
+	void ScanDecString(string);
+	//void ScanHexString(string);
+
+	string GetBinString();
+	string GetDecString();
+
 };
 
 #endif // !__QINT_H__
