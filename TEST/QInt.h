@@ -26,33 +26,33 @@ public:
 	void ScanBinString(string);
 	void ScanDecString(string);
 	
-	//void ScanHexString(string);
+	//void ScanHexString(string) // duong
 
 	string GetBinString();
 	string GetDecString(); // print dec string
 
-	//string GetHexString();
+	//string GetHexString(); // dat
 
-	QInt operator+ (const QInt& a);
-	QInt operator- (const QInt& a);
-	QInt operator* (const QInt& a);
-	QInt operator/ (const QInt& a);
-	QInt operator= (const QInt& a);
+	QInt operator+ (const QInt& a); // duong
+	QInt operator- (const QInt& a); // duong
+	QInt operator* (const QInt& a); // moi nguoi tu viet
+	QInt operator/ (const QInt& a); // nhdung
+	QInt operator= (const QInt& a); 
 
-	QInt operator& (const QInt& a);
-	QInt operator| (const QInt& a);
-	QInt operator^ (const QInt& a);
-	QInt operator~ ();
+	QInt operator& (const QInt& a); // duong
+	QInt operator| (const QInt& a); // duong
+	QInt operator^ (const QInt& a); // duong
+	QInt operator~ (); // duong
 
-	QInt operator>> (int a);
-	QInt operator<< (int a);
+	QInt operator>> (int a); // dat
+	QInt operator<< (int a); // dat
 
-	QInt rol(int a);
-	QInt ror(int a);
+	QInt rol(int a); // nhdung
+	QInt ror(int a); // nhdung
 
-	bool operator< (const QInt& a);
-	bool operator> (const QInt& a);
-	bool operator<= (const QInt& a);
+	bool operator< (const QInt& a); // dat
+	bool operator> (const QInt& a); // dat
+	bool operator<= (const QInt& a); // dat
 	bool operator>= (const QInt& a);
 	bool operator== (const QInt& a);
 
