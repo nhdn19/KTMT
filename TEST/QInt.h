@@ -33,8 +33,8 @@ public:
 
 	//string GetHexString(); // dat
 
-	QInt operator+ (const QInt& a); // duong
-	QInt operator- (const QInt& a); // duong
+	QInt operator+ (QInt& a); // duong, done, no tested
+	QInt operator- (QInt& a); // duong, done, no tested
 	QInt operator* (const QInt& a); // moi nguoi tu viet
 	QInt operator/ (const QInt& a); // nhdung
 	QInt operator= (const QInt& a); 

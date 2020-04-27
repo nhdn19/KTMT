@@ -283,6 +283,44 @@ string QInt::GetBinString()
 
 //duong
 
+//arithmetic operator
+
+QInt QInt::operator+(QInt& a) {
+	int d = 0;
+	QInt sum;
+	int t, b;
+	for (int i = 0; i < 128; i++) {
+		t = GetBit(i), b = a.GetBit(i);
+		if (d == 0) {
+			if (t == 1 && b == 1) d = 1;
+			else if (t == 1 || b == 1) sum.SetBit(i);
+		}
+		else if (d == 1) {
+			if (t == 1 && b == 1) sum.SetBit(i);
+			else if (t == 0 && b == 0) {
+				sum.SetBit(i);
+				d = 0;
+			}
+		}
+	}
+	//if ((t == 1 && b == 1 && sum.GetBit(127) == 0) || (t == 0 && b == 0 && sum.GetBit(127) == 1))
+	//	cout << "OverFlow" << endl;
+	//if (d == 1) cout << "Overflow" << endl;
+	return sum;
+}
+
+QInt QInt::operator-(QInt& a) {
+	string str = a.GetBinString();
+	reverseBits(str);
+	add1ToBin(str);
+	QInt b;
+	b.ScanBinString(str);
+	return (*this + b);
+}
+
+
+
+//scan
 void QInt::ScanHexString(string s) {
 	string hex[16];
 	for (int i = 0; i < 16; i++) {
@@ -292,12 +330,11 @@ void QInt::ScanHexString(string s) {
 		string ahextobin = q.GetBinString();
 		ahextobin = ahextobin.substr(ahextobin.length() - 4);
 		hex[i] = ahextobin;
-
 	}
-	bool isNeg = false;
+	//bool isNeg = false;
 	string bin = "";
-	if (s[0] == '8' || s[0] == '9' || (s[0] >= 'A' && s[0] <= 'F'))
-		isNeg = true;
+	//if (s.size() == 32 && (s[0] == '8' || s[0] == '9' || (s[0] >= 'A' && s[0] <= 'F')))
+	//	isNeg = true;
 	for (int i = s.size() - 1; i >= 0; i--) {
 		char c = s[i];
 		if (c <= 'F' && c >= 'A')
@@ -309,21 +346,15 @@ void QInt::ScanHexString(string s) {
 			return;
 		}
 	}
-	//cout << ans << endl;
-	//QInt d;
-	//d.ScanBinString(ans);
-	//string bin = stringDecToStringBin(ans);
-	cout << "bin: " << bin << endl;
-	if (isNeg)
-	{
-		while (bin.length() != 128)
-		{
-			bin = '0' + bin;
-		}
-		reverseBits(bin);
-		cout << "afterReverse: " << bin << endl;
-		add1ToBin(bin);
-	}
+	//if (isNeg)
+	//{
+	//	//while (bin.length() != 128)
+	//	//{
+	//	//	bin = '0' + bin;
+	//	//}
+	//	reverseBits(bin);
+	//	add1ToBin(bin);
+	//}
 
 	for (int i = 0; i < bin.length(); i++)
 	{
@@ -333,6 +364,7 @@ void QInt::ScanHexString(string s) {
 
 }
 
+//logic operator
 QInt QInt::operator&(QInt& a) {
 	QInt ans;
 	for (int i = 0; i < 128; i++)
@@ -381,7 +413,7 @@ void QInt::printData() {
 	cout << data[0] << " " << data[1] << " " << data[2] << " " << data[3] << endl;
 }
 
-
+////////////
 
 
 
