@@ -14,6 +14,7 @@ private:
 	int data[4];
 
 public:
+	QInt() { OffBit(); } // ban dau thi bit toan 0
 
 	void OffBit();
 	void SetBit(int i);

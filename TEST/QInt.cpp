@@ -1,4 +1,110 @@
 #include "QInt.h"
+//by Dat
+void add1ToBin(string& str) // + 1 vao chuoi nhi phan
+{
+	for (int i = str.length() - 1; i >= 0; i--)
+	{
+		if (str[i] == '1')
+			str[i] = '0';
+		else
+		{
+			str[i] = '1';
+			break;
+		}
+	}
+}
+
+void reverseBits(string& str) // dao chuoi nhi phan
+{
+	for (int i = 0; i < str.length(); i++)
+		str[i] = '1' - str[i] + '0';
+}
+
+int divideBy2(string& str) // chia mot chuoi so thap phan lon, thay doi chuoi va tra ra so du
+{
+	if (str == "1")
+	{
+		str = "0";
+		return 1;
+	}
+	int rem = 0;
+	string newstr = "";
+	for (int i = 0; i < str.length(); i++)
+	{
+		rem = rem * 10 + str[i] - '0';
+		newstr = newstr + char(rem / 2 + '0');
+		if (newstr == "0")
+			newstr = "";
+		rem %= 2;
+	}
+	str = newstr;
+	return rem;
+}
+
+void multiplyBy2(string& str) // nhan 2 vao chuoi so thap phan
+{
+	int carry = 0;
+	string newstr = "";
+	for (int i = str.length() - 1; i >= 0; i--)
+	{
+		int temp = (str[i] - '0') * 2 + carry;
+		carry = temp / 10;
+		newstr = char(temp % 10 + '0') + newstr;
+		if (i == 0 && carry != 0)
+			newstr = char(carry + '0') + newstr;
+	}
+	str = newstr;
+}
+
+void add1ToString(string& str) // + 1 vao chuoi so thap phan
+{
+	for (int i = str.length() - 1; i >= 0; i--)
+	{
+		if (str[i] == '9')
+		{
+			str[i] = '0';
+			if (i == 0)
+				str = '1' + str;
+		}
+		else
+		{
+			str[i] += 1;
+			break;
+		}
+	}
+}
+
+string stringDecToStringBin(string dec) // chuyen mot chuoi so thap lon sang chuoi nhi phan tuong ung (chi xu li so duong)
+{
+	if (dec == "0")
+		return dec;
+	string str = dec;
+	string res = ""; // ket qua
+	while (str != "0")
+	{
+		int r = divideBy2(str);
+		res = char(r + '0') + res;
+	}
+	return res;
+} 
+
+string stringBinToStringDec(string bin) // chuyen mot chuoi nhi phan lon sang chuoi so thap phan (chi so duong)
+{
+	string res = "0"; //ket qua
+	int i = 0; //bo cac so 0 o dau chuoi nhi phan
+	while (bin[i] == '0')
+		i++;
+	for (i; i < bin.length(); i++)
+	{
+		multiplyBy2(res);
+		if (bin[i] == '1')
+			add1ToString(res);
+	}
+	return res;
+}
+
+
+
 
 void QInt::OffBit()
 {
@@ -33,14 +139,30 @@ void QInt::ScanBinString(string s)
 	}
 }
 
+//edited by Dat
 void QInt::ScanDecString(string s)
 {
-	int k = 0;
-
-	while (s != "")
+	string str = s;
+	bool isNeg = false;
+	if (str[0] == '-')
 	{
-		bool bit = DivideByTwo(s);
-		if (bit) SetBit(k);
+		isNeg = true;
+		str = str.substr(1, str.length() - 1);
+	}
+	string bin = stringDecToStringBin(str);
+	if (isNeg)
+	{
+		while (bin.length() != 128)
+		{
+			bin = '0' + bin;
+		}
+		reverseBits(bin);
+		add1ToBin(bin);
+	}
+	for (int i = 0; i < bin.length(); i++)
+	{
+		if (bin[i] == '1')
+			SetBit(bin.length() - 1 - i);
 	}
 }
 
@@ -125,22 +247,21 @@ void QInt::StringSum(string& s, string a)
 	s = z;
 }
 
+//edited by Dat
 string QInt::GetDecString()
 {
-	string s = "";
-
-	string k = "";
-
-	for (int i = 0; i < 128; i++)
+	string str = GetBinString();
+	bool isNeg = false;
+	if (str[0] == '1')
 	{
-		MultiplyByTwo(k);
-
-		bool bit = GetBit(i);
-
-		if (bit) StringSum(s, k);
+		isNeg = true;
+		reverseBits(str);
+		add1ToBin(str);
 	}
-
-	return s;
+	string res = stringBinToStringDec(str);
+	if (isNeg)
+		res = '-' + res;
+	return res;
 }
 
 string QInt::GetBinString()
@@ -151,7 +272,7 @@ string QInt::GetBinString()
 	{
 		bool bit = GetBit(i);
 
-		if (i % 4 == 0) s = ' ' + s;
+		//if (i % 4 == 0) s = ' ' + s;
 
 		bit ? s = '1' + s : s = '0' + s;
 	}
