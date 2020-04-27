@@ -2,6 +2,7 @@
 using namespace std;
 
 //take bits from left -> right
+// change master
 int divBy2(string& s)
 {
 	int r = 0;
