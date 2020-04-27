@@ -1,7 +1,7 @@
 #include <iostream>
-
 using namespace std;
 
+//take bits from left -> right
 int divBy2(string& s)
 {
 	int r = 0;
