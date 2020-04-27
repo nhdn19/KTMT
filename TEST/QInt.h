@@ -21,14 +21,40 @@ public:
 
 	bool DivideByTwo(string& s);
 	void MultiplyByTwo(string& s);
-	void StringSum(string& s);
+	void StringSum(string& s, string a);
 
 	void ScanBinString(string);
 	void ScanDecString(string);
+	
 	//void ScanHexString(string);
 
 	string GetBinString();
-	string GetDecString();
+	string GetDecString(); // print dec string
+
+	//string GetHexString();
+
+	QInt operator+ (const QInt& a);
+	QInt operator- (const QInt& a);
+	QInt operator* (const QInt& a);
+	QInt operator/ (const QInt& a);
+	QInt operator= (const QInt& a);
+
+	QInt operator& (const QInt& a);
+	QInt operator| (const QInt& a);
+	QInt operator^ (const QInt& a);
+	QInt operator~ ();
+
+	QInt operator>> (int a);
+	QInt operator<< (int a);
+
+	QInt rol(int a);
+	QInt ror(int a);
+
+	bool operator< (const QInt& a);
+	bool operator> (const QInt& a);
+	bool operator<= (const QInt& a);
+	bool operator>= (const QInt& a);
+	bool operator== (const QInt& a);
 
 };
 

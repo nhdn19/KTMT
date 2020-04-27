@@ -95,26 +95,30 @@ void QInt::MultiplyByTwo(string& s)
 	s = p;
 }
 
-void QInt::StringSum(string& s)
+void QInt::StringSum(string& s, string a)
 {
-	string a = s;
-
 	string z = "";
 
 	int c = 0;
 
-	MultiplyByTwo(s);
-
 	while (a.size() < s.size()) a = '0' + a;
+
+	while (s.size() < a.size()) s = '0' + s;
 
 	for (int i = s.size() - 1; i >= 0; i--)
 	{
-		int t = (s[i] - '0') + (a[i] - '0');
+		int t = c + (s[i] - '0') + (a[i] - '0');
 
-		char d = c + t % 10 + '0';
+		char d = t % 10 + '0';
 
 		c = t / 10;
 
+		z = d + z;
+	}
+
+	if (c != 0)
+	{
+		char d = c + '0';
 		z = d + z;
 	}
 
@@ -125,11 +129,15 @@ string QInt::GetDecString()
 {
 	string s = "";
 
+	string k = "";
+
 	for (int i = 0; i < 128; i++)
 	{
+		MultiplyByTwo(k);
+
 		bool bit = GetBit(i);
 
-		bit ? StringSum(s) : MultiplyByTwo(s);
+		if (bit) StringSum(s, k);
 	}
 
 	return s;
@@ -142,6 +150,8 @@ string QInt::GetBinString()
 	for (int i = 0; i < 128; i++)
 	{
 		bool bit = GetBit(i);
+
+		if (i % 4 == 0) s = ' ' + s;
 
 		bit ? s = '1' + s : s = '0' + s;
 	}
