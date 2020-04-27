@@ -6,6 +6,7 @@ using namespace std;
 string DecToBin(QInt x)
 {
 	x.GetBinString();
+	return "";
 }
 
 QInt BinToDec(string x)
@@ -26,9 +27,9 @@ int main()
 
 	string s = "101111110001011011100011010011";
 
-	string z = "801487059";
+	string z = "-801487059";
 
-	Q.ScanBinString(s);
+	Q.ScanDecString(z);
 
 	cout << Q.GetBinString() << endl;
 

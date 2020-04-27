@@ -14,6 +14,7 @@ private:
 	int data[4];
 
 public:
+	QInt() { OffBit(); } // ban dau thi bit toan 0
 
 	void OffBit();
 	void SetBit(int i);
@@ -25,11 +26,10 @@ public:
 
 	void ScanBinString(string);
 	void ScanDecString(string);
-	
-	//void ScanHexString(string) // duong
+	void ScanHexString(string); // duong done, no tested
 
-	string GetBinString();
-	string GetDecString(); // print dec string
+	string GetBinString(); // tested work on both negative 
+	string GetDecString(); // print dec string, tested work on both nagative
 
 	//string GetHexString(); // dat
 
@@ -38,11 +38,12 @@ public:
 	QInt operator* (const QInt& a); // moi nguoi tu viet
 	QInt operator/ (const QInt& a); // nhdung
 	QInt operator= (const QInt& a); 
+	//QInt operator= (const string,const int type); 
 
-	QInt operator& (const QInt& a); // duong
-	QInt operator| (const QInt& a); // duong
-	QInt operator^ (const QInt& a); // duong
-	QInt operator~ (); // duong
+	QInt operator& (QInt& a); // duong tested, done
+	QInt operator| (QInt& a); // duong tested, done
+	QInt operator^ (QInt& a); // duong tested, done
+	QInt operator~ (); // duong tested, done
 
 	QInt operator>> (int a); // dat
 	QInt operator<< (int a); // dat
@@ -50,12 +51,15 @@ public:
 	QInt rol(int a); // nhdung
 	QInt ror(int a); // nhdung
 
-	bool operator< (const QInt& a); // dat
-	bool operator> (const QInt& a); // dat
-	bool operator<= (const QInt& a); // dat
-	bool operator>= (const QInt& a);
-	bool operator== (const QInt& a);
+	bool operator< (QInt a); // dat
+	bool operator> (QInt a); // dat
+	bool operator<= (QInt a); // dat
+	bool operator>= (QInt a);
+	bool operator== (QInt a);
 
+
+	//extra
+	void printData();
 };
 
 #endif // !__QINT_H__
