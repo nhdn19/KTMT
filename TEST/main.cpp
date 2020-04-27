@@ -1,36 +1,37 @@
 #include <iostream>
+#include "QInt.h"
+
 using namespace std;
 
-//take bits from left -> right
-// change master
-int divBy2(string& s)
+string DecToBin(QInt x)
 {
-	int r = 0;
-	string q = "";
-
-	for (int i = 0; i < s.length(); i++)
-	{
-		r = r * 10 + s[i] - '0';
-
-		char c = r / 2 + '0';
-
-		q = q + c;
-
-		r = r % 2;
-	}
-
-	s = q;
-
-	return r;
+	x.GetBinString();
 }
+
+QInt BinToDec(string x)
+{
+	QInt q;
+
+	q.ScanBinString(x);
+
+
+
+	return q;
+}
+
 
 int main()
 {
-	cout << "Init Project" << endl;
+	QInt Q;
 
-	string s = "1287579";
+	string s = "101111110001011011100011010011";
 
-	int r = divBy2(s);
+	string z = "801487059";
 
-	cout << r << ' ' << s << endl;
+	Q.ScanBinString(s);
+
+	cout << Q.GetBinString() << endl;
+
+	cout << Q.GetDecString() << endl;
+	
 }
