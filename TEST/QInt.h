@@ -51,11 +51,11 @@ public:
 	QInt rol(int a); // nhdung
 	QInt ror(int a); // nhdung
 
-	bool operator< (const QInt& a); // dat
-	bool operator> (const QInt& a); // dat
-	bool operator<= (const QInt& a); // dat
-	bool operator>= (const QInt& a);
-	bool operator== (const QInt& a);
+	bool operator< (QInt a); // dat
+	bool operator> (QInt a); // dat
+	bool operator<= (QInt a); // dat
+	bool operator>= (QInt a);
+	bool operator== (QInt a);
 
 };
 

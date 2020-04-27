@@ -279,3 +279,98 @@ string QInt::GetBinString()
 
 	return s;
 }
+
+QInt QInt::operator>>(int a)
+{
+	bool msb = GetBit(127);
+	QInt temp;
+	//xu li truong hop dich phai qua 128bit
+	if (a >= 128)
+	{
+		if (msb)
+			for (int i = 0; i < 127; i++)
+				temp.SetBit(i);
+		return temp;
+	}
+	//bat dau xu li
+	int i = 0;
+	for (i; i < 128 - a; i++)
+		if (GetBit(i + a))
+			temp.SetBit(i);
+	if (msb)
+	{
+		while (i < 128)
+		{
+			temp.SetBit(i++);
+		}
+	}
+	return temp;
+}
+
+QInt QInt::operator<<(int a)
+{
+	QInt temp;
+	if (a >= 128)
+		return temp;
+	int i = 127;
+	for (i; i >= a; i--)
+		if (GetBit(i - a))
+			temp.SetBit(i);
+	return temp;
+}
+
+bool QInt::operator<(QInt a)
+{
+	bool msb1 = GetBit(127), msb2 = a.GetBit(127);
+	if (msb1 > msb2)
+		return true;
+	else if (msb1 < msb2)
+		return false;
+	for (int i = 126; i >= 0; i--)
+	{
+		bool bit1 = GetBit(i), bit2 = a.GetBit(i);
+		if (bit1 > bit2)
+			return false;
+		else if (bit1 < bit2)
+			return true;
+	}
+	return false;
+}
+
+bool QInt::operator>(QInt a)
+{
+	return !(*this <= a);
+}
+
+bool QInt::operator<=(QInt a)
+{
+	bool msb1 = GetBit(127), msb2 = a.GetBit(127);
+	if (msb1 > msb2)
+		return true;
+	else if (msb1 < msb2)
+		return false;
+	for (int i = 126; i >= 0; i--)
+	{
+		bool bit1 = GetBit(i), bit2 = a.GetBit(i);
+		if (bit1 > bit2)
+			return false;
+		else if (bit1 < bit2)
+			return true;
+	}
+	return true;
+}
+
+bool QInt::operator>=(QInt a)
+{
+	return !(*this < a);
+}
+
+bool QInt::operator==(QInt a)
+{
+	for (int i = 127; i >= 0; i--)
+	{
+		if (GetBit(i) != a.GetBit(i))
+			return false;
+	}
+	return true;
+}
