@@ -5,7 +5,7 @@ using namespace std;
 
 string DecToBin(QInt x)
 {
-	x.GetBinString();
+	return x.GetBinString();
 }
 
 QInt BinToDec(string x)
@@ -13,8 +13,6 @@ QInt BinToDec(string x)
 	QInt q;
 
 	q.ScanBinString(x);
-
-
 
 	return q;
 }
@@ -28,7 +26,7 @@ int main()
 
 	string z = "801487059";
 
-	Q.ScanBinString(s);
+	Q.ScanDecString(z);
 
 	cout << Q.GetBinString() << endl;
 

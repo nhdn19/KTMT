@@ -35,12 +35,15 @@ void QInt::ScanBinString(string s)
 
 void QInt::ScanDecString(string s)
 {
+	OffBit();
+
 	int k = 0;
 
 	while (s != "")
 	{
 		bool bit = DivideByTwo(s);
 		if (bit) SetBit(k);
+		k = k + 1;
 	}
 }
 
