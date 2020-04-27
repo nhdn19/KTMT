@@ -2,11 +2,7 @@
 using namespace std;
 
 //take bits from left -> right
-<<<<<<< master
-// change master
-=======
-// nhanh moi tao
->>>>>>> test duongphan22
+
 int divBy2(string& s)
 {
 	int r = 0;
