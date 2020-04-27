@@ -27,11 +27,12 @@ int main()
 
 	string s = "101111110001011011100011010011";
 
-	string z = "5";
+	string z = "-801487059";
 
 	Q.ScanDecString(z);
 
 	cout << Q.GetBinString() << endl;
 
 	cout << Q.GetDecString() << endl;
+	
 }
