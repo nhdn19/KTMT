@@ -1,59 +1,44 @@
 #include "QInt.h"
-//by Dat
-void add1ToBin(string& str) // + 1 vao chuoi nhi phan
-{
-	for (int i = str.length() - 1; i >= 0; i--)
-	{
-		if (str[i] == '1')
-			str[i] = '0';
-		else
-		{
-			str[i] = '1';
-			break;
-		}
-	}
-}
 
-void reverseBits(string& str) // dao chuoi nhi phan
-{
-	for (int i = 0; i < str.length(); i++)
-		str[i] = '1' - str[i] + '0';
-}
 
-int divideBy2(string& str) // chia mot chuoi so thap phan lon, thay doi chuoi va tra ra so du
+int divideBy2(string& str) // divide decimal string by 2, return remainder
 {
-	if (str == "1")
-	{
-		str = "0";
-		return 1;
-	}
-	int rem = 0;
-	string newstr = "";
+	if (str == "0") return 0;
+
+	int remainder = 0;
+
+	string quotient = "";
+
 	for (int i = 0; i < str.length(); i++)
 	{
-		rem = rem * 10 + str[i] - '0';
-		newstr = newstr + char(rem / 2 + '0');
-		if (newstr == "0")
-			newstr = "";
-		rem %= 2;
+		remainder = remainder * 10 + str[i] - '0';
+		quotient = quotient + char(remainder / 2 + '0');
+		if (quotient == "0") quotient = "";
+		remainder = remainder % 2;
 	}
-	str = newstr;
-	return rem;
+
+	if (quotient == "") quotient = "0";
+
+	str = quotient;
+
+	return remainder;
 }
 
-void multiplyBy2(string& str) // nhan 2 vao chuoi so thap phan
+void multiplyBy2(string& str) // mulitply decimal string by 2
 {
 	int carry = 0;
-	string newstr = "";
+	string product = "";
+
 	for (int i = str.length() - 1; i >= 0; i--)
 	{
 		int temp = (str[i] - '0') * 2 + carry;
 		carry = temp / 10;
-		newstr = char(temp % 10 + '0') + newstr;
+		product = char(temp % 10 + '0') + product;
 		if (i == 0 && carry != 0)
-			newstr = char(carry + '0') + newstr;
+			product = char(carry + '0') + product;
 	}
-	str = newstr;
+
+	str = product;
 }
 
 void add1ToString(string& str) // + 1 vao chuoi so thap phan
@@ -68,51 +53,35 @@ void add1ToString(string& str) // + 1 vao chuoi so thap phan
 		}
 		else
 		{
-			str[i] += 1;
+			str[i] = str[i] + 1;
 			break;
 		}
 	}
 }
 
-string stringDecToStringBin(string dec) // chuyen mot chuoi so thap lon sang chuoi nhi phan tuong ung (chi xu li so duong)
-{
-	if (dec == "0")
-		return dec;
-	string str = dec;
-	string res = ""; // ket qua
-	while (str != "0")
-	{
-		int r = divideBy2(str);
-		res = char(r + '0') + res;
-	}
-	return res;
-}
-
-string stringBinToStringDec(string bin) // chuyen mot chuoi nhi phan lon sang chuoi so thap phan (chi so duong)
-{
-	string res = "0"; //ket qua
-	int i = 0; //bo cac so 0 o dau chuoi nhi phan
-	while (bin[i] == '0')
-		i++;
-	for (i; i < bin.length(); i++)
-	{
-		multiplyBy2(res);
-		if (bin[i] == '1')
-			add1ToString(res);
-	}
-	return res;
-}
-
-
-
-
-void QInt::OffBit()
+QInt::QInt()
 {
 	data[0] = data[1] = data[2] = data[3] = 0;
 }
 
+void QInt::ZeroBits()
+{
+	data[0] = data[1] = data[2] = data[3] = 0;
+}
+
+void QInt::OffBit(int i)
+{
+	if (i < 0 || i > size - 1) return;
+
+	int& block = data[3 - i / 32];
+	int index = i % 32;
+	block = block & ~(1 << index);
+}
+
 void QInt::SetBit(int i)
 {
+	if (i < 0 || i > size - 1) return;
+
 	int& block = data[3 - i / 32];
 	int index = i % 32;
 	block = block | (1 << index);
@@ -120,6 +89,8 @@ void QInt::SetBit(int i)
 
 bool QInt::GetBit(int i)
 {
+	if (i < 0 || i > size - 1) return 0;
+
 	int block = data[3 - i / 32];
 	int index = i % 32;
 	int bit = 1 & (block >> index);
@@ -128,6 +99,8 @@ bool QInt::GetBit(int i)
 
 void QInt::ScanBinString(string s)
 {
+	ZeroBits();
+
 	int k = 0;
 
 	for (int i = s.size() - 1; i >= 0; i--)
@@ -141,7 +114,7 @@ string QInt::GetBinString()
 {
 	string s = "";
 
-	for (int i = 0; i < 128; i++)
+	for (int i = 0; i < size; i++)
 	{
 		bool bit = GetBit(i);
 
@@ -153,204 +126,292 @@ string QInt::GetBinString()
 
 void QInt::ScanDecString(string s)
 {
-	string str = s;
-	bool isNeg = false;
-	if (str[0] == '-')
-	{
-		isNeg = true;
-		str = str.substr(1, str.length() - 1);
-	}
-	string bin = stringDecToStringBin(str);
-	if (isNeg)
-	{
-		while (bin.length() != 128)
-		{
-			bin = '0' + bin;
-		}
-		reverseBits(bin);
-		add1ToBin(bin);
+	ZeroBits();
 
-	}
-	for (int i = 0; i < bin.length(); i++)
+	bool isNegative = false;
+
+	if (s[0] == '-')
 	{
-		if (bin[i] == '1')
-			SetBit(bin.length() - 1 - i);
+		isNegative = true;
+		s = s.substr(1, s.length() - 1);
 	}
+
+	string res = ""; // result
+
+	for (int i = 0; i < size; i++)
+	{
+		int r = divideBy2(s);
+		if (r) SetBit(i);
+	}
+
+	if (isNegative) *this = ++(~(*this));
 }
 
 string QInt::GetDecString()
 {
-	string str = GetBinString();
+	bool isNegative = false;
 
-	bool isNeg = false;
-	if (str[0] == '1')
+	QInt ans = *this;
+
+	if (GetBit(size - 1))
 	{
-		isNeg = true;
-		reverseBits(str);
-		add1ToBin(str);
+		isNegative = true;
+		ans = ++(~(*this));
 	}
 
-	string res = stringBinToStringDec(str);
+	string res = "0"; // result
 
-	if (isNeg) res = '-' + res;
+	int i = size - 1; // loop from msb
+
+	while (ans.GetBit(i) == 0 && i >= 0) i--;
+
+	for (i; i >= 0; i--)
+	{
+		multiplyBy2(res);
+		if (ans.GetBit(i)) add1ToString(res);
+	}
+
+	if (isNegative) res = '-' + res;
 
 	return res;
 }
 
 void QInt::ScanHexString(string s)
 {
+	ZeroBits();
+
 	string hex[16];
 
 	for (int i = 0; i < 16; i++)
 	{
-		string temp = to_string(i);
-		QInt q;
-		q.ScanDecString(temp);
-		string ahextobin = q.GetBinString();
-		ahextobin = ahextobin.substr(ahextobin.length() - 4);
-		hex[i] = ahextobin;
+		QInt T;
+		T.ScanDecString(to_string(i));
+		string bin = T.GetBinString();
+		hex[i] = bin.substr(bin.size() - 4);
 	}
 
-	//bool isNeg = false;
-	//if (s.size() == 32 && (s[0] == '8' || s[0] == '9' || (s[0] >= 'A' && s[0] <= 'F')))
-	//	isNeg = true;
+	bool isNegative = false;
+
+	if (s[0] == '-')
+	{
+		isNegative = true;
+		s = s.substr(1, s.size() - 1);
+	}
 
 	string bin = "";
 
-	for (int i = s.size() - 1; i >= 0; i--) {
-		char c = s[i];
-		if (c <= 'F' && c >= 'A')
-			bin = hex[(c - 'A' + 10)] + bin;
-		else if (c <= '9' && c >= '0')
-			bin = hex[(c - '0')] + bin;
-		else {
-			cout << "Scan Wrong Hex" << endl;
-			return;
-		}
-	}
-
-	//if (isNeg)
-	//{
-	//	//while (bin.length() != 128)
-	//	//{
-	//	//	bin = '0' + bin;
-	//	//}
-	//	reverseBits(bin);
-	//	add1ToBin(bin);
-	//}
-
-	for (int i = 0; i < bin.length(); i++)
+	for (int i = 0; i < s.size(); i++) 
 	{
-		if (bin[i] == '1')
-			SetBit(bin.length() - 1 - i);
+		char c = s[i];
+		if ('A' <= c <= 'F')
+			bin = bin + hex[(c - 'A' + 10)];
+		else if ('0' <= c <= '9')
+			bin = bin + hex[(c - '0')];
 	}
+
+	int k = 0;
+
+	for (int i = bin.size() - 1; i >= 0; i--)
+	{
+		if (bin[i] == '1') SetBit(k);
+		k = k + 1;
+	}
+
+	if (isNegative) *this = ++(~(*this));
 }
 
 
 // arithmetic operator
 
-QInt QInt::operator+(QInt& a) {
-	int d = 0;
-	QInt sum;
-	int t, b;
-	for (int i = 0; i < 128; i++) {
-		t = GetBit(i), b = a.GetBit(i);
-		if (d == 0) {
-			if (t == 1 && b == 1) d = 1;
-			else if (t == 1 || b == 1) sum.SetBit(i);
+QInt QInt::operator ++ ()
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (!GetBit(i))
+		{
+			SetBit(i);
+			break;
 		}
-		else if (d == 1) {
-			if (t == 1 && b == 1) sum.SetBit(i);
-			else if (t == 0 && b == 0) {
-				sum.SetBit(i);
-				d = 0;
-			}
-		}
+		
+		OffBit(i);
 	}
-	//if ((t == 1 && b == 1 && sum.GetBit(127) == 0) || (t == 0 && b == 0 && sum.GetBit(127) == 1))
-	//	cout << "OverFlow" << endl;
-	//if (d == 1) cout << "Overflow" << endl;
+
+	return *this;
+}
+
+QInt QInt::operator + (QInt T) 
+{
+	int c = 0;
+	int x, y;
+
+	QInt sum;
+
+	for (int i = 0; i < size; i++) 
+	{
+		x = GetBit(i), y = T.GetBit(i);
+		int p = x + y + c;
+		if (p % 2) sum.SetBit(i);
+		if (p > 1) c = 1;
+		else c = 0;
+	}
+
+	// van y tuong cu cua Duong, Dung chi viet gon lai thoi
+	
 	return sum;
 }
 
-QInt QInt::operator-(QInt& a) {
-	string str = a.GetBinString();
-	reverseBits(str);
-	add1ToBin(str);
-	QInt b;
-	b.ScanBinString(str);
-	return (*this + b);
+QInt QInt::operator - (QInt T) 
+{
+	QInt revs = ++(~T);
+
+	return (*this + revs);
 }
 
-// logic operator
-
-QInt QInt::operator&(QInt& a) 
+QInt QInt::operator * (QInt M)
 {
-	QInt ans;
-	for (int i = 0; i < 128; i++)
-		if (GetBit(i) && a.GetBit(i))
-			ans.SetBit(i);
-	return ans;
+	bool T = 0; // Q_(-1) value
+	bool A0 = 0;
+	bool Q0 = 0;
+
+	QInt Q = *this;
+	QInt N = ++(~M); // value of -M
+	QInt A;
+
+	for (int i = 0; i < size; i++)
+	{
+		if (Q.GetBit(0) == 1 && T == 0) A = A + N;
+		if (Q.GetBit(0) == 0 && T == 1) A = A + M;
+
+		A0 = A.GetBit(0);
+		A = A >> 1;
+		Q0 = Q.GetBit(0);
+		Q = Q >> 1;
+		A0 ? Q.SetBit(size - 1) : Q.OffBit(size - 1);
+		Q0 ? T = 1 : T = 0;
+	}
+
+	return Q;
 }
 
-QInt QInt::operator^(QInt& a) 
+QInt QInt::operator / (QInt M)
 {
-	QInt ans;
-	for (int i = 0; i < 128; i++)
-		if (GetBit(i) != a.GetBit(i))
-			ans.SetBit(i);
-	return ans;
+	QInt Q = *this;
+	QInt A, B;
+
+	bool sQ = Q.GetBit(size - 1);
+	bool sM = M.GetBit(size - 1);
+
+	if (sQ == 1) Q = ++(~Q); 
+	if (sM == 0) M = ++(~M);
+
+	for (int i = 0; i < size; i++)
+	{
+		A = A << 1;
+		
+		if (Q.GetBit(size - 1)) A.SetBit(0);
+
+		Q = Q << 1;
+
+		B = A + M;
+
+		if (B.GetBit(size - 1) == 0)
+		{
+			Q.SetBit(0);
+			A = B;
+		}
+	}
+
+	if (sQ) A = ++(~A);
+	if (sQ ^ sM) Q = ++(~Q);
+
+	*this = Q;
+
+	return A;
 }
 
-QInt QInt::operator|(QInt& a)
+QInt QInt::operator = (const QInt& T)
 {
-	QInt ans;
-	for (int i = 0; i < 128; i++)
-		if (GetBit(i) || a.GetBit(i))
-			ans.SetBit(i);
-	return ans;
-}
+	for (int i = 0; i < 4; i++)
+		this->data[i] = T.data[i];
 
-QInt QInt::operator~() 
-{
-	bool take = 0;
-	QInt ans;
-	for (int i = 0; i < 128; i++)
-		if (!GetBit(i)) ans.SetBit(i);
-	return ans;
-}
-
-QInt QInt::operator=(const QInt& a) 
-{
-	for (int i = 0; i < 4; i++) this->data[i] = a.data[i];
 	return *this;
 }
 
 
-QInt QInt::operator>>(int a)
+// logic operator
+
+QInt QInt::operator & (QInt& T) 
 {
-	bool msb = GetBit(127);
+	QInt ans;
+
+	for (int i = 0; i < size; i++)
+		if (GetBit(i) && T.GetBit(i))
+			ans.SetBit(i);
+
+	return ans;
+}
+
+QInt QInt::operator ^ (QInt& T)
+{
+	QInt ans;
+
+	for (int i = 0; i < size; i++)
+		if (GetBit(i) != T.GetBit(i))
+			ans.SetBit(i);
+
+	return ans;
+}
+
+
+QInt QInt::operator | (QInt& T)
+{
+	QInt ans;
+
+	for (int i = 0; i < size; i++)
+		if (GetBit(i) || T.GetBit(i))
+			ans.SetBit(i);
+
+	return ans;
+}
+
+QInt QInt::operator ~ () 
+{
+	QInt ans;
+
+	for (int i = 0; i < size; i++)
+		if (!GetBit(i)) ans.SetBit(i);
+
+	return ans;
+}
+
+// shift operator
+
+QInt QInt::operator >> (int k)
+{
+	bool msb = GetBit(size - 1);
 
 	QInt temp;
 
-	//xu li truong hop dich phai qua 128bit
-	if (a >= 128)
+	//xu li truong hop dich phai qua sizebit
+
+	if (msb && k >= size)
 	{
-		if (msb)
-			for (int i = 0; i < 127; i++)
-				temp.SetBit(i);
+		for (int i = 0; i < 127; i++)
+			temp.SetBit(i);
+
 		return temp;
 	}
 
 	//bat dau xu li
+
 	int i = 0;
-	for (i; i < 128 - a; i++)
-		if (GetBit(i + a))
-			temp.SetBit(i);
+
+	for (i; i < size - k; i++)
+		if (GetBit(i + k)) temp.SetBit(i);
 
 	if (msb)
 	{
-		while (i < 128)
+		while (i < size)
 		{
 			temp.SetBit(i++);
 		}
@@ -359,84 +420,91 @@ QInt QInt::operator>>(int a)
 	return temp;
 }
 
-QInt QInt::operator<<(int a)
+QInt QInt::operator << (int k)
 {
 	QInt temp;
 
-	if (a >= 128)
-		return temp;
+	if (k >= size) return temp;
 
-	int i = 127;
-
-	for (i; i >= a; i--)
-		if (GetBit(i - a))
-			temp.SetBit(i);
+	for (int i = size - 1; i >= k; i--)
+		if (GetBit(i - k)) temp.SetBit(i);
 
 	return temp;
 }
 
-bool QInt::operator<(QInt a)
+
+// comparison operator
+
+bool QInt::operator < (QInt T)
 {
-	bool msb1 = GetBit(127), msb2 = a.GetBit(127);
+	bool msbx = GetBit(size - 1);
+	bool msby = T.GetBit(size - 1);
 
-	if (msb1 > msb2)
-		return true;
-	else if (msb1 < msb2)
-		return false;
+	if (msbx > msby) return true;
+	if (msbx < msby) return false;
 
-	for (int i = 126; i >= 0; i--)
+	for (int i = size - 2; i >= 0; i--)
 	{
-		bool bit1 = GetBit(i), bit2 = a.GetBit(i);
-
-		if (bit1 > bit2)
-			return false;
-		else if (bit1 < bit2)
-			return true;
+		bool bitx = GetBit(i);
+		bool bity = T.GetBit(i);
+		if (bitx > bity) return false;
+		if (bitx < bity) return true;
 	}
 
 	return false;
 }
 
-bool QInt::operator>(QInt a)
+
+bool QInt::operator > (QInt T)
 {
-	return !(*this <= a);
+	return !(*this <= T);
 }
 
-bool QInt::operator<=(QInt a)
+
+bool QInt::operator <= (QInt T)
 {
-	bool msb1 = GetBit(127), msb2 = a.GetBit(127);
-	if (msb1 > msb2)
-		return true;
-	else if (msb1 < msb2)
-		return false;
+	bool msbx = GetBit(size - 1);
+	bool msby = T.GetBit(127);
+
+	if (msbx > msby) return true;
+	if (msbx < msby) return false;
+
 	for (int i = 126; i >= 0; i--)
 	{
-		bool bit1 = GetBit(i), bit2 = a.GetBit(i);
-		if (bit1 > bit2)
-			return false;
-		else if (bit1 < bit2)
-			return true;
+		bool bitx = GetBit(i);
+		bool bity = T.GetBit(i);
+		if (bitx > bity) return false;
+		if (bitx < bity) return true;
 	}
+
 	return true;
 }
 
-bool QInt::operator>=(QInt a)
+
+bool QInt::operator >= (QInt T)
 {
-	return !(*this < a);
+	return !(*this < T);
 }
 
-bool QInt::operator==(QInt a)
+
+bool QInt::operator == (QInt T)
 {
 	for (int i = 127; i >= 0; i--)
 	{
-		if (GetBit(i) != a.GetBit(i))
+		if (GetBit(i) != T.GetBit(i))
 			return false;
 	}
+
 	return true;
 }
 
 
-//extra
-void QInt::printData() {
-	cout << data[0] << " " << data[1] << " " << data[2] << " " << data[3] << endl;
+// extra
+void QInt::printData() 
+{
+	for (int i = 0; i < size / 32; i++)
+	{
+		cout << data[i] << ' ';
+	}
+	cout << endl;
 }
