@@ -128,8 +128,6 @@ bool QInt::GetBit(int i)
 
 void QInt::ScanBinString(string s)
 {
-	OffBit();
-
 	int k = 0;
 
 	for (int i = s.size() - 1; i >= 0; i--)
@@ -139,7 +137,20 @@ void QInt::ScanBinString(string s)
 	}
 }
 
-//edited by Dat
+string QInt::GetBinString()
+{
+	string s = "";
+
+	for (int i = 0; i < 128; i++)
+	{
+		bool bit = GetBit(i);
+
+		bit ? s = '1' + s : s = '0' + s;
+	}
+
+	return s;
+}
+
 void QInt::ScanDecString(string s)
 {
 	string str = s;
@@ -167,91 +178,10 @@ void QInt::ScanDecString(string s)
 	}
 }
 
-bool QInt::DivideByTwo(string& s)
-{
-	int r = 0;
-
-	string q = "";
-
-	for (int i = 0; i < s.length(); i++)
-	{
-		r = r * 10 + s[i] - '0';
-
-		char c = r / 2 + '0';
-
-		if (q != "" || c != '0')
-			q = q + c;
-
-		r = r % 2;
-	}
-
-	s = q;
-
-	return r;
-}
-
-void QInt::MultiplyByTwo(string& s)
-{
-	int c = 0;
-
-	string p = "";
-
-	for (int i = s.size() - 1; i >= 0; i--)
-	{
-		int t = 2 * (s[i] - '0');
-
-		char d = c + t % 10 + '0';
-
-		c = t / 10;
-
-		p = d + p;
-	}
-
-	if (c != 0)
-	{
-		char d = c + '0';
-		p = d + p;
-	}
-
-	if (p == "") p = "1";
-
-	s = p;
-}
-
-void QInt::StringSum(string& s, string a)
-{
-	string z = "";
-
-	int c = 0;
-
-	while (a.size() < s.size()) a = '0' + a;
-
-	while (s.size() < a.size()) s = '0' + s;
-
-	for (int i = s.size() - 1; i >= 0; i--)
-	{
-		int t = c + (s[i] - '0') + (a[i] - '0');
-
-		char d = t % 10 + '0';
-
-		c = t / 10;
-
-		z = d + z;
-	}
-
-	if (c != 0)
-	{
-		char d = c + '0';
-		z = d + z;
-	}
-
-	s = z;
-}
-
-//edited by Dat
 string QInt::GetDecString()
 {
 	string str = GetBinString();
+
 	bool isNeg = false;
 	if (str[0] == '1')
 	{
@@ -259,45 +189,34 @@ string QInt::GetDecString()
 		reverseBits(str);
 		add1ToBin(str);
 	}
+
 	string res = stringBinToStringDec(str);
-	if (isNeg)
-		res = '-' + res;
+
+	if (isNeg) res = '-' + res;
+
 	return res;
 }
 
-string QInt::GetBinString()
+void QInt::ScanHexString(string s)
 {
-	string s = "";
-
-	for (int i = 0; i < 128; i++)
-	{
-		bool bit = GetBit(i);
-
-		//if (i % 4 == 0) s = ' ' + s;
-
-		bit ? s = '1' + s : s = '0' + s;
-	}
-
-	return s;
-}
-
-//duong
-
-void QInt::ScanHexString(string s) {
 	string hex[16];
-	for (int i = 0; i < 16; i++) {
+
+	for (int i = 0; i < 16; i++)
+	{
 		string temp = to_string(i);
 		QInt q;
 		q.ScanDecString(temp);
 		string ahextobin = q.GetBinString();
 		ahextobin = ahextobin.substr(ahextobin.length() - 4);
 		hex[i] = ahextobin;
-
 	}
-	bool isNeg = false;
+
+	//bool isNeg = false;
+	//if (s.size() == 32 && (s[0] == '8' || s[0] == '9' || (s[0] >= 'A' && s[0] <= 'F')))
+	//	isNeg = true;
+
 	string bin = "";
-	if (s[0] == '8' || s[0] == '9' || (s[0] >= 'A' && s[0] <= 'F'))
-		isNeg = true;
+
 	for (int i = s.size() - 1; i >= 0; i--) {
 		char c = s[i];
 		if (c <= 'F' && c >= 'A')
@@ -309,31 +228,64 @@ void QInt::ScanHexString(string s) {
 			return;
 		}
 	}
-	//cout << ans << endl;
-	//QInt d;
-	//d.ScanBinString(ans);
-	//string bin = stringDecToStringBin(ans);
-	cout << "bin: " << bin << endl;
-	if (isNeg)
-	{
-		while (bin.length() != 128)
-		{
-			bin = '0' + bin;
-		}
-		reverseBits(bin);
-		cout << "afterReverse: " << bin << endl;
-		add1ToBin(bin);
-	}
+
+	//if (isNeg)
+	//{
+	//	//while (bin.length() != 128)
+	//	//{
+	//	//	bin = '0' + bin;
+	//	//}
+	//	reverseBits(bin);
+	//	add1ToBin(bin);
+	//}
 
 	for (int i = 0; i < bin.length(); i++)
 	{
 		if (bin[i] == '1')
 			SetBit(bin.length() - 1 - i);
 	}
-
 }
 
-QInt QInt::operator&(QInt& a) {
+
+// arithmetic operator
+
+QInt QInt::operator+(QInt& a) {
+	int d = 0;
+	QInt sum;
+	int t, b;
+	for (int i = 0; i < 128; i++) {
+		t = GetBit(i), b = a.GetBit(i);
+		if (d == 0) {
+			if (t == 1 && b == 1) d = 1;
+			else if (t == 1 || b == 1) sum.SetBit(i);
+		}
+		else if (d == 1) {
+			if (t == 1 && b == 1) sum.SetBit(i);
+			else if (t == 0 && b == 0) {
+				sum.SetBit(i);
+				d = 0;
+			}
+		}
+	}
+	//if ((t == 1 && b == 1 && sum.GetBit(127) == 0) || (t == 0 && b == 0 && sum.GetBit(127) == 1))
+	//	cout << "OverFlow" << endl;
+	//if (d == 1) cout << "Overflow" << endl;
+	return sum;
+}
+
+QInt QInt::operator-(QInt& a) {
+	string str = a.GetBinString();
+	reverseBits(str);
+	add1ToBin(str);
+	QInt b;
+	b.ScanBinString(str);
+	return (*this + b);
+}
+
+// logic operator
+
+QInt QInt::operator&(QInt& a) 
+{
 	QInt ans;
 	for (int i = 0; i < 128; i++)
 		if (GetBit(i) && a.GetBit(i))
@@ -341,7 +293,8 @@ QInt QInt::operator&(QInt& a) {
 	return ans;
 }
 
-QInt QInt::operator^(QInt& a) {
+QInt QInt::operator^(QInt& a) 
+{
 	QInt ans;
 	for (int i = 0; i < 128; i++)
 		if (GetBit(i) != a.GetBit(i))
@@ -349,7 +302,8 @@ QInt QInt::operator^(QInt& a) {
 	return ans;
 }
 
-QInt QInt::operator|(QInt& a) {
+QInt QInt::operator|(QInt& a)
+{
 	QInt ans;
 	for (int i = 0; i < 128; i++)
 		if (GetBit(i) || a.GetBit(i))
@@ -357,7 +311,8 @@ QInt QInt::operator|(QInt& a) {
 	return ans;
 }
 
-QInt QInt::operator~() {//not 128bits
+QInt QInt::operator~() 
+{
 	bool take = 0;
 	QInt ans;
 	for (int i = 0; i < 128; i++)
@@ -365,30 +320,19 @@ QInt QInt::operator~() {//not 128bits
 	return ans;
 }
 
-
-//operator = with a QInt
-QInt QInt::operator=(const QInt& a) {
+QInt QInt::operator=(const QInt& a) 
+{
 	for (int i = 0; i < 4; i++) this->data[i] = a.data[i];
 	return *this;
 }
-
-//QInt QInt::operator=(const string a,int type) {
-//}
-
-
-//extra
-void QInt::printData() {
-	cout << data[0] << " " << data[1] << " " << data[2] << " " << data[3] << endl;
-}
-
-
-
 
 
 QInt QInt::operator>>(int a)
 {
 	bool msb = GetBit(127);
+
 	QInt temp;
+
 	//xu li truong hop dich phai qua 128bit
 	if (a >= 128)
 	{
@@ -397,11 +341,13 @@ QInt QInt::operator>>(int a)
 				temp.SetBit(i);
 		return temp;
 	}
+
 	//bat dau xu li
 	int i = 0;
 	for (i; i < 128 - a; i++)
 		if (GetBit(i + a))
 			temp.SetBit(i);
+
 	if (msb)
 	{
 		while (i < 128)
@@ -409,36 +355,45 @@ QInt QInt::operator>>(int a)
 			temp.SetBit(i++);
 		}
 	}
+
 	return temp;
 }
 
 QInt QInt::operator<<(int a)
 {
 	QInt temp;
+
 	if (a >= 128)
 		return temp;
+
 	int i = 127;
+
 	for (i; i >= a; i--)
 		if (GetBit(i - a))
 			temp.SetBit(i);
+
 	return temp;
 }
 
 bool QInt::operator<(QInt a)
 {
 	bool msb1 = GetBit(127), msb2 = a.GetBit(127);
+
 	if (msb1 > msb2)
 		return true;
 	else if (msb1 < msb2)
 		return false;
+
 	for (int i = 126; i >= 0; i--)
 	{
 		bool bit1 = GetBit(i), bit2 = a.GetBit(i);
+
 		if (bit1 > bit2)
 			return false;
 		else if (bit1 < bit2)
 			return true;
 	}
+
 	return false;
 }
 
@@ -478,4 +433,10 @@ bool QInt::operator==(QInt a)
 			return false;
 	}
 	return true;
+}
+
+
+//extra
+void QInt::printData() {
+	cout << data[0] << " " << data[1] << " " << data[2] << " " << data[3] << endl;
 }

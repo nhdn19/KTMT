@@ -3,36 +3,23 @@
 
 using namespace std;
 
-string DecToBin(QInt x)
-{
-	x.GetBinString();
-	return "";
-}
-
-QInt BinToDec(string x)
-{
-	QInt q;
-
-	q.ScanBinString(x);
-
-
-
-	return q;
-}
-
 
 int main()
 {
-	QInt Q;
-
-	string s = "101111110001011011100011010011";
-
-	string z = "-801487059";
-
-	Q.ScanDecString(z);
-
-	cout << Q.GetBinString() << endl;
-
-	cout << Q.GetDecString() << endl;
+	// overflow example
+	// 2^127-1 = 170141183460469231731687303715884105727  
+	// min = -2^127 = -170141183460469231731687303715884105728
+	QInt max;
+	max.ScanDecString("170141183460469231731687303715884105728");
+	cout << max.GetBinString() << endl;
+	cout << max.GetDecString() << endl << endl;
 	
+
+	QInt q;
+	q.ScanDecString("874238130414891884104938493930401344");
+	cout << q.GetBinString() << endl;
+	cout << q.GetDecString() << endl;
+	q << 1;
+	cout << q.GetBinString() << endl;
+	cout << q.GetDecString() << endl;
 }
