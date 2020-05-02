@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
 	// int b = -2147483646;
 	// cout << a + b << endl;
 
-	if (argc != 0)
+	if (argc == 3)
 	{
 		freopen(argv[1], "r", stdin);
 		freopen(argv[2], "w", stdout);
@@ -176,4 +176,6 @@ int main(int argc, char* argv[])
 		if (argv[3][0] == '1')
 			while (!cin.eof()) processQInt();
 	}
+
+	return 0;
 }
