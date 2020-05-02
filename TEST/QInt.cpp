@@ -190,22 +190,14 @@ void QInt::ScanHexString(string s)
 		hex[i] = bin.substr(bin.size() - 4);
 	}
 
-	bool isNegative = false;
-
-	if (s[0] == '-')
-	{
-		isNegative = true;
-		s = s.substr(1, s.size() - 1);
-	}
-
 	string bin = "";
 
 	for (int i = 0; i < s.size(); i++) 
 	{
 		char c = s[i];
-		if ('A' <= c <= 'F')
+		if ('A' <= c && c <= 'F')
 			bin = bin + hex[(c - 'A' + 10)];
-		else if ('0' <= c <= '9')
+		else if ('0' <= c && c <= '9')
 			bin = bin + hex[(c - '0')];
 	}
 
@@ -217,9 +209,76 @@ void QInt::ScanHexString(string s)
 		k = k + 1;
 	}
 
-	if (isNegative) *this = ++(~(*this));
 }
 
+string QInt::GetHexString()
+{
+	char hex[16];
+
+	for (int i = 0; i < 16; i++)
+	{
+		if (i < 10) hex[i] = i + '0';
+		else hex[i] = (i - 10) + 'A';
+	}
+
+	string res = ""; // result
+
+	int i = size - 1; // loop from msb
+
+	while (GetBit(i) == 0 && i >= 0) i--;
+
+	for (int j = 0; j <= i; j += 4)
+	{
+		int v = 0;
+
+		for (int k = 3; k >= 0; k--)
+		{
+			if (j + k > i) continue;
+			v = v * 2;
+			if (GetBit(j + k)) v = v + 1;
+		}
+
+		res = hex[v] + res;
+	}
+
+	if (res == "") return "0";
+
+	return res;
+}
+
+void QInt::ScanQInt(string T, string base)
+{
+	if (base == "2")
+		this->ScanBinString(T);
+
+	if (base == "10")
+		this->ScanDecString(T);
+
+	if (base == "16")
+		this->ScanHexString(T);
+}
+
+string QInt::GetQInt(string base)
+{
+	if (base == "2")
+	{
+		string ans = this->GetBinString();
+
+		int i = 0;
+
+		while (ans[i] == '0') i += 1;
+
+		return ans.erase(0, i);
+	}
+
+	if (base == "10")
+		return this->GetDecString();
+
+	if (base == "16")
+		return this->GetHexString();
+
+	return "";
+}
 
 // arithmetic operator
 
@@ -321,10 +380,41 @@ QInt QInt::operator / (QInt M)
 		}
 	}
 
-	if (sQ) A = ++(~A);
 	if (sQ ^ sM) Q = ++(~Q);
 
-	*this = Q;
+	return Q;
+}
+
+
+QInt QInt::operator % (QInt M)
+{
+	QInt Q = *this;
+	QInt A, B;
+
+	bool sQ = Q.GetBit(size - 1);
+	bool sM = M.GetBit(size - 1);
+
+	if (sQ == 1) Q = ++(~Q);
+	if (sM == 0) M = ++(~M);
+
+	for (int i = 0; i < size; i++)
+	{
+		A = A << 1;
+
+		if (Q.GetBit(size - 1)) A.SetBit(0);
+
+		Q = Q << 1;
+
+		B = A + M;
+
+		if (B.GetBit(size - 1) == 0)
+		{
+			Q.SetBit(0);
+			A = B;
+		}
+	}
+
+	if (sQ) A = ++(~A);
 
 	return A;
 }
@@ -334,6 +424,13 @@ QInt QInt::operator = (const QInt& T)
 	for (int i = 0; i < 4; i++)
 		this->data[i] = T.data[i];
 
+	return *this;
+}
+
+
+QInt QInt::operator = (const string T)
+{
+	this->ScanDecString(T);
 	return *this;
 }
 

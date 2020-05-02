@@ -12,7 +12,7 @@ class QInt
 {
 private:
 
-	int size = 4; // number of bits
+	int size = 128; // number of bits
 	int data[4]; // block of 32 bits
 
 public:
@@ -25,21 +25,22 @@ public:
 
 	void ScanBinString(string);
 	void ScanDecString(string);
-	void ScanHexString(string); // duong done, dung rewrite, not tested
+	void ScanHexString(string); // duong done, all tested
+	void ScanQInt(string, string);
 
 	string GetBinString(); // tested work on both negative 
 	string GetDecString(); // tested work on both nagative
-
-	//string GetHexString(); // dat
+	string GetHexString(); // dat
+	string GetQInt(string);
 
 	QInt operator ++ (); // dung done
 	QInt operator + (QInt); // duong done, dung tested
 	QInt operator - (QInt); // duong done, dung tested
 	QInt operator * (QInt); // nhdung, slight tested
 	QInt operator / (QInt); // nhdung, tested with 7/3
+	QInt operator % (QInt);
 	QInt operator = (const QInt&); 
-
-	//QInt operator= (const string,const int type); 
+	QInt operator = (const string); // for only decimal 
 
 	QInt operator & (QInt&); // duong tested, done
 	QInt operator | (QInt&); // duong tested, done
