@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "QInt.h"
+#include "Qfloat.h"
 
 using namespace std;
 
@@ -167,7 +168,7 @@ int main(int argc, char* argv[])
 	// int a = -2147483649;
 	// int b = -2147483646;
 	// cout << a + b << endl;
-
+	/*
 	if (argc == 3)
 	{
 		freopen(argv[1], "r", stdin);
@@ -176,6 +177,11 @@ int main(int argc, char* argv[])
 		if (argv[3][0] == '1')
 			while (!cin.eof()) processQInt();
 	}
-
+	*/
+	Qfloat f;
+	f.ScanDecString("10.28543");
+	f.Print();
+	cout << endl << f.GetDecString() << endl;
 	return 0;
 }
+//001

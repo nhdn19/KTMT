@@ -64,4 +64,8 @@ public:
 	void printData();
 };
 
+int divideBy2(string& str);
+void multiplyBy2(string& str);
+void add1ToString(string& str);
+
 #endif
