@@ -78,7 +78,7 @@ void Qfloat::ScanDecString(string dec)
 		wholeBin = char(r + '0') + wholeBin;
 	} while (whole != "0");
 	int len1 = wholeBin.length();
-		//infinity
+	//infinity
 	if (len1 > 16384)
 	{
 		for (int i = 126; i >= 112; i--)
@@ -129,7 +129,7 @@ void Qfloat::ScanDecString(string dec)
 		}
 	}
 
-	
+
 	int exp = 0; //exponent
 	string tempBin = wholeBin + fractionalBin;
 	int start = 0; //position from tempBin to start set bit to significand
@@ -157,7 +157,7 @@ void Qfloat::ScanDecString(string dec)
 	if (exp != 0)
 	{
 		exp += 16383;
-		int pos = 112; 
+		int pos = 112;
 		while (exp != 0)
 		{
 			if (exp % 2 == 1)
@@ -265,7 +265,7 @@ string Qfloat::GetDecString()
 		multiplyBy2(whole);
 		if (wholeBin[i] == '1') add1ToString(whole);
 	}
-		//fractional part
+	//fractional part
 	string fractional = "";
 	for (int i = fractionalBin.length() - 1; i >= 0; i--)
 	{
@@ -293,8 +293,160 @@ string Qfloat::GetDecString()
 	return res;
 }
 
-void Qfloat::Print()
+string Qfloat::GetBinString()// rename Print to getBinString
 {
+	string ans = "";
 	for (int i = 127; i >= 0; i--)
-		cout << GetBit(i);
+		ans = ans + to_string(GetBit(i));
+	return ans;
 }
+
+///////////////////////////////////////
+
+void Qfloat::ScanBinString(string s)
+{
+	ZeroBits();
+
+	int k = 0;
+
+	for (int i = s.size() - 1; i >= 0; i--)
+	{
+		if (s[i] == '1') SetBit(k);
+		k = k + 1;
+	}
+}
+
+
+Qfloat Qfloat::operator+(Qfloat y) {
+	//this = x;
+
+	//
+	Qfloat z;
+	if (this->GetDecString() == "0")
+		return y;
+	if (y.GetDecString() == "0")
+		return *this;
+	QInt xE, yE, xS, yS, zS, zE;//E is Exponents, S is Signficand
+
+	xE.ScanBinString(this->getExponent());
+	yE.ScanBinString(y.getExponent());
+
+	xS.ScanBinString(this->getSignificand());
+	yS.ScanBinString(y.getSignificand());
+
+	//calculate accurate exponent
+	QInt bias;
+	bias.ScanDecString("16383");
+	xE = xE - bias;
+	yE = yE - bias;
+
+
+	//SetBit in 112 of Significand
+	xS.SetBit(112);
+	yS.SetBit(112);
+
+	//makes exponents equal
+	while (xE < yE) {
+		++xE;
+		xS = (xS >> 1);
+		if (xS.GetDecString() == "0")
+			return y;
+	}
+	while (xE > yE) {
+		++yE;
+		yS = (yS >> 1);
+		if (yS.GetDecString() == "0")
+			return y;
+	}
+
+	//isNegative
+	bool isNeg = false;
+	if ((y.GetBit(127) == 1 && this->GetBit(127) == 1) || (y.GetBit(127) == 1 && (yS > xS)) || (this->GetBit(127) == 1) && (xS > yS))
+		isNeg = true;
+
+	//add signed significand
+	if (y.GetBit(127) == this->GetBit(127))
+		zS = xS + yS;
+	else {
+		if (xS > yS)
+			zS = xS - yS;
+		else
+			zS = yS - xS;
+	}
+
+	//significand = 0
+	if (zS.GetDecString() == "0") {
+		z.ScanDecString("0");
+		return z;
+	}
+
+	//significand overflow?
+
+	//while until significant's form : 01.....
+	string str = "";
+	for (int i = 113; i >= 0; i--)
+		str = str + to_string(zS.GetBit(i));
+	if (str[0] == '1') {
+		str = "0" + str;
+		str.pop_back();
+		++xE;
+	}
+	while (str[1] != '1') {
+		str = str + '0';
+		str.erase(str.begin());
+		QInt temp;
+		temp.ScanDecString("1");
+		xE = xE - temp;
+	}
+
+	while (str.size() > 112)
+		str.erase(str.begin());
+
+	xE = xE + bias;
+
+	string exponent = "";
+	for (int i = 14; i >= 0; i--)
+		exponent = exponent + to_string(xE.GetBit(i));
+
+	string ans = exponent + str;
+	if (isNeg) ans = "1" + ans;
+	else ans = "0" + ans;
+	z.ScanBinString(ans);
+
+	return z;
+}
+
+Qfloat Qfloat::operator-(Qfloat y) {
+	if (y.GetBit(127))
+		y.OffBit(127);
+	else
+		y.SetBit(127);
+	return *this + y;
+}
+
+//extra
+string Qfloat::getSign() {
+	if (GetBit(127)) return "1";
+	return "0";
+}
+
+string Qfloat::getExponent() {
+	string s = "";
+	for (int i = 126; i >= 112; i--)
+		if (GetBit(i))
+			s += "1";
+		else
+			s += "0";
+	return s;
+}
+
+string Qfloat::getSignificand() {
+	string s = "";
+	for (int i = 111; i >= 0; i--)
+		if (GetBit(i))
+			s += "1";
+		else
+			s += "0";
+	return s;
+}
+
