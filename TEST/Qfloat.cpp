@@ -1,5 +1,6 @@
 #include "Qfloat.h"
 #include "QInt.h"
+#include <math.h>
 
 
 
@@ -109,7 +110,8 @@ void Qfloat::ScanDecString(string dec)
 			{
 				counter++;
 				multiplyBy2(tempstr);
-				if (tempstr.length() != fractional.length())
+				int flen = fractional.length();
+				if (tempstr.length() != flen)
 				{
 					if (first1 == 0)
 					{
@@ -268,15 +270,27 @@ string Qfloat::GetDecString()
 	string fractional = "";
 	for (int i = fractionalBin.length() - 1; i >= 0; i--)
 	{
+		bool check = false;
 		if (fractionalBin[i] == '1')
 			fractional = '1' + fractional;
+		else
+		{
+			if (fractional[0] == '1' || fractional[0] == '0')
+				check = true;
+		}
 		fractional += '0';
 		divideBy2(fractional);
+		if (check)
+			fractional = '0' + fractional;
 	}
-	if (GetBit(127))
-		return '-' + whole + '.' + fractional;
+	string res;
+	if (fractional != "")
+		res = whole + '.' + fractional;
 	else
-		return whole + '.' + fractional;
+		res = whole;
+	if (GetBit(127))
+		res = '-' + res;
+	return res;
 }
 
 void Qfloat::Print()

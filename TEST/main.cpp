@@ -179,9 +179,8 @@ int main(int argc, char* argv[])
 	}
 	*/
 	Qfloat f;
-	f.ScanDecString("10.28543");
+	f.ScanDecString("-10");
 	f.Print();
 	cout << endl << f.GetDecString() << endl;
 	return 0;
 }
-//001
