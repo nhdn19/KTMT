@@ -179,7 +179,7 @@ int main(int argc, char* argv[])
 	}
 	*/
 	Qfloat f;
-	f.ScanDecString("-10");
+	f.ScanDecString("-10.64573459734598734536");
 	f.Print();
 	cout << endl << f.GetDecString() << endl;
 	return 0;

@@ -1,9 +1,8 @@
 #include "Qfloat.h"
 #include "QInt.h"
-#include <math.h>
 
 
-
+//check if str contain all 0
 bool isFull0(string str)
 {
 	for (int i = 0; i < str.length(); i++)
@@ -206,8 +205,8 @@ string Qfloat::GetDecString()
 		if (!isSignificandFull0)
 			return "NaN";
 		if (GetBit(127))
-			return "Inf";
-		return "-Inf";
+			return "-Inf";
+		return "Inf";
 	}
 
 	//find binary of whole and fractional part
@@ -283,7 +282,8 @@ string Qfloat::GetDecString()
 		if (check)
 			fractional = '0' + fractional;
 	}
-	string res;
+	//get result
+	string res; //result
 	if (fractional != "")
 		res = whole + '.' + fractional;
 	else
