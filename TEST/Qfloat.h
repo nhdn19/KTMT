@@ -1,8 +1,9 @@
-#ifndef _QFLOAT_H__
+	#ifndef _QFLOAT_H__
 #define _QFLOAT_H__
 //2^-16494 -> (1 - 2^-112)2^-16382		2^-16382 -> 2^16383(2 - 2^-112)
 //			range 1								range 2
 #include <iostream>
+#include "QInt.h"
 using namespace std;
 
 class Qfloat
@@ -19,9 +20,17 @@ public:
 	bool GetBit(int i);
 
 	void ScanDecString(string dec);
+	void ScanBinString(string bin);
 	string GetDecString();
+	string GetBinString();
 
-	void Print();
+	Qfloat operator+(Qfloat);//just on positive number
+	Qfloat operator-(Qfloat);
+
+	//extra
+	string getSign();//print sign
+	string getExponent();//print exponent
+	string getSignificand();
 };
 
 #endif

@@ -32,7 +32,6 @@ string BinToHex(string x)
 	return Q.GetHexString();
 }
 
-
 QInt arithmeticQInt(string base, string x, char o, string y)
 {
 	QInt a, b;
@@ -68,7 +67,7 @@ QInt logicQInt(string base, string x, char o, string y)
 	switch (o)
 	{
 	case '~':
-		return (~ a);
+		return (~a);
 	case '&':
 		return (a & b);
 	case '|':
@@ -111,12 +110,11 @@ bool compareQInt(string base, string x, string o, string y)
 string convertQInt(string a, string b, string x)
 {
 	QInt Q;
-	
+
 	Q.ScanQInt(x, a);
 
 	return Q.GetQInt(b);
 }
-
 
 void processQInt()
 {
@@ -178,10 +176,15 @@ int main(int argc, char* argv[])
 			while (!cin.eof()) processQInt();
 	}
 	*/
-	Qfloat f;
-	f.ScanDecString("10.28543");
-	f.Print();
-	cout << endl << f.GetDecString() << endl;
+	//Qfloat pos, neg;
+	//pos.ScanDecString("5.75");
+	//neg.ScanDecString("-5.75");
+	//cout << pos.GetBinString() << endl << neg.GetBinString() << endl;
+	Qfloat f, f1, f2;
+	f1.ScanDecString("35.7");
+	f2.ScanDecString("5.75");
+	f = f1 - f2;
+	cout << f.GetDecString();
 	return 0;
 }
 //001
