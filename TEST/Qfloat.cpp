@@ -154,9 +154,9 @@ void Qfloat::ScanDecString(string dec)
 		return;
 	}
 	//set exp bit
+	exp += 16383;
 	if (exp != 0)
 	{
-		exp += 16383;
 		int pos = 112;
 		while (exp != 0)
 		{
