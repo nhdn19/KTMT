@@ -1,4 +1,4 @@
-	#ifndef _QFLOAT_H__
+#ifndef _QFLOAT_H__
 #define _QFLOAT_H__
 //2^-16494 -> (1 - 2^-112)2^-16382		2^-16382 -> 2^16383(2 - 2^-112)
 //			range 1								range 2
@@ -12,7 +12,7 @@ private:
 	int data[4];
 	int size = 128;
 public:
-	Qfloat() { data[0] = data[1] = data[2] = data[3] = 0; }
+	Qfloat() { ZeroBits(); }
 
 	void ZeroBits(); // for reuse QInt
 	void OffBit(int i); // bit_i = 0
@@ -26,11 +26,13 @@ public:
 
 	Qfloat operator+(Qfloat);//just on positive number
 	Qfloat operator-(Qfloat);
+	Qfloat operator/(Qfloat);
 
 	//extra
 	string getSign();//print sign
 	string getExponent();//print exponent
 	string getSignificand();
+	int GetExponentDec();
 };
 
 #endif

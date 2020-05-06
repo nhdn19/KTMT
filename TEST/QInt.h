@@ -17,6 +17,7 @@ private:
 
 public:
 	QInt();
+	QInt(string str) { ScanDecString(str); }
 
 	void ZeroBits(); // for reuse QInt
 	void OffBit(int i); // bit_i = 0

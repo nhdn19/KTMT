@@ -192,13 +192,7 @@ string Qfloat::GetDecString()
 				break;
 
 	//calculate exponent
-	int exp = 0; //exponent
-	for (int i = 126; i >= 112; i--)
-	{
-		exp *= 2;
-		if (GetBit(i))
-			exp += 1;
-	}
+	int exp = this->GetExponentDec(); //exponent
 
 	if (exp == 32767) //if all bits in exponent are 1
 	{
@@ -270,6 +264,7 @@ string Qfloat::GetDecString()
 	for (int i = fractionalBin.length() - 1; i >= 0; i--)
 	{
 		bool check = false;
+		int l = fractional.length();
 		if (fractionalBin[i] == '1')
 			fractional = '1' + fractional;
 		else
@@ -280,7 +275,10 @@ string Qfloat::GetDecString()
 		fractional += '0';
 		divideBy2(fractional);
 		if (check)
-			fractional = '0' + fractional;
+		{
+			while (fractional.length() < l + 1)
+				fractional = '0' + fractional;
+		}
 	}
 	//get result
 	string res; //result
@@ -424,6 +422,120 @@ Qfloat Qfloat::operator-(Qfloat y) {
 	return *this + y;
 }
 
+Qfloat Qfloat::operator/(Qfloat y)
+{
+	//x = 0 -> return 0
+	if (this->GetDecString() == "0")
+		return Qfloat();
+	//y = 0
+	if (y.GetDecString() == "0")
+	{
+		//return NaN
+		Qfloat temp;
+		for (int i = 126; i >= 111; i--)
+			temp.SetBit(i);
+		return temp;
+	}
+
+	bool isNegative = true;
+	if (this->GetBit(127) == y.GetBit(127))
+		isNegative = false;
+
+	Qfloat z; //result
+	if (isNegative)
+		z.SetBit(127);
+
+	QInt xSig, ySig; //significand of x and y
+	int xExp = this->GetExponentDec(); //exponent of x
+	int yExp = y.GetExponentDec(); //exponent of y
+	for (int i = 0; i <= 111; i++)
+	{
+		if (GetBit(i))
+			xSig.SetBit(i);
+		if (y.GetBit(i))
+			ySig.SetBit(i);
+	}
+	if (xExp == 0)
+		xExp = 1;
+	else
+		xSig.SetBit(112);
+	if (yExp == 0)
+		yExp = 1;
+	else
+		ySig.SetBit(112);
+
+	while (!xSig.GetBit(126))
+	{
+		xSig = xSig << 1;
+		xExp--;
+	}
+	while (!ySig.GetBit(0))
+	{
+		ySig = ySig >> 1;
+		yExp++;
+	}
+
+	QInt zSig = xSig / ySig; 
+	int zExp = xExp - yExp;
+	string zSigBin = "";
+	bool check = false;
+	for (int i = 126; i >= 0; i--)
+	{
+		bool bit = zSig.GetBit(i);
+		if (bit) check = true;
+		if (check) zSigBin += char(bit + '0');
+	}
+	if (zSigBin != "")
+	{
+		int len = zSigBin.length();
+		zExp = zExp + (len - 1);
+		if (zExp > 16383) //overflow
+		{
+			for (int i = 126; i > 111; i--)
+				z.SetBit(i);
+			return z; //infinity
+		}
+		else if (zExp < -16494 || (zExp == -16494 && zSigBin != "1")) //underflow
+			return z; // -> 0
+		else if (zExp < -16382 || (zExp == -16494 && zSigBin == "1")) //denormalized
+		{
+			int t = -16382 - zExp;
+			while (t > 0)
+			{
+				zSigBin = '0' + zSigBin;
+				t--;
+			}
+			zExp = 0;
+		}
+		else
+		{
+			zExp += 16383;
+			zSigBin = zSigBin.substr(1);
+		}
+	}
+	else
+		return Qfloat();
+	if (zExp > 0)
+	{
+		QInt exp;
+		exp.ScanDecString(to_string(zExp));
+		for (int i = 0; i < 15; i++)
+			if (exp.GetBit(i))
+				z.SetBit(i + 112);
+	}
+	if (!zSigBin.empty())
+	{
+		int k = 0, i = 111;
+		while (k < zSigBin.length() && i >= 0)
+		{
+			if (zSigBin[k] == '1')
+				z.SetBit(i);
+			k++; i--;
+		}
+	}
+	return z;
+}
+
 //extra
 string Qfloat::getSign() {
 	if (GetBit(127)) return "1";
@@ -448,5 +560,17 @@ string Qfloat::getSignificand() {
 		else
 			s += "0";
 	return s;
+}
+
+int Qfloat::GetExponentDec()
+{
+	int res = 0;
+	for (int i = 126; i > 111; i--)
+	{
+		res *= 2;
+		if (GetBit(i))
+			res++;
+	}
+	return res;
 }
 
