@@ -180,6 +180,8 @@ int main(int argc, char* argv[])
 	//pos.ScanDecString("5.75");
 	//neg.ScanDecString("-5.75");
 	//cout << pos.GetBinString() << endl << neg.GetBinString() << endl;
+	//123.135 //323.25
+	////////////TEST
 	Qfloat f, f1, f2;
 	f1.ScanDecString("0.038734");
 	f2.ScanDecString("-0.234734");

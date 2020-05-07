@@ -422,6 +422,87 @@ Qfloat Qfloat::operator-(Qfloat y) {
 	return *this + y;
 }
 
+Qfloat Qfloat::operator*(Qfloat y) {
+	if (this->GetDecString() == "0")
+		return *this;
+	if (y.GetDecString() == "0")
+		return y;
+
+	//exponent handler 
+	QInt xE, yE, zE;//E is Exponents
+	QInt bias;
+	bias.ScanDecString("16383");
+	xE.ScanBinString(this->getExponent());
+	yE.ScanBinString(y.getExponent());
+
+	zE = xE + yE - bias;
+
+	//significand handler
+	QInt xS, yS, zS;
+	string xS_str, yS_str;
+	xS_str = this->getSignificand();
+	int p = xS_str.size() - 1;
+	for (int i = p; i >= 0; i--)
+		if (xS_str[i] == '0') xS_str.pop_back();
+		else break;
+	p = xS_str.size();
+
+	yS_str = y.getSignificand();
+	int q = yS_str.size() - 1;
+	for (int i = q; i >= 0; i--)
+		if (yS_str[i] == '0') yS_str.pop_back();
+		else break;
+	q = yS_str.size();
+
+	xS_str = "1" + xS_str; yS_str = "1" + yS_str;
+
+	xS.ScanBinString(xS_str);
+	yS.ScanBinString(yS_str);
+
+	//multi 2 significand string function
+	//zS = xS * yS;
+
+	string zS_str = multi2String(xS_str, yS_str);
+	//string zS_str = zS.GetBinString();
+
+	//t handler
+	while (zS_str[0] == '0')
+		zS_str.erase(zS_str.begin());
+
+	if (zS_str.size() > 0) zS_str.erase(zS_str.begin());
+
+	int t = zS_str.size();
+
+	int newexponent = t - p - q;
+	QInt temp_exponent;
+	temp_exponent.ScanDecString(to_string(newexponent));
+	zE = zE + temp_exponent;
+
+	while (zS_str.size() > 112)
+		zS_str.pop_back();
+
+
+	//ans
+
+	string ans;
+	for (int i = 14; i >= 0; i--)
+		ans = ans + to_string(zE.GetBit(i));
+	ans += zS_str;
+
+	//is Negative 
+	bool isNeg = false;
+	if ((this->GetBit(127) == 1 && y.GetBit(127) == 0) || (this->GetBit(127) == 0 && y.GetBit(127) == 1))
+		isNeg = true;
+	if (isNeg) ans = "1" + ans; else ans = "0" + ans;
+
+	while (ans.size() < 128)
+		ans += "0";
+	Qfloat z;
+	z.ScanBinString(ans);
+	return z;
+
+}
+
 Qfloat Qfloat::operator/(Qfloat y)
 {
 	//x = 0 -> return 0
@@ -537,6 +618,76 @@ Qfloat Qfloat::operator/(Qfloat y)
 }
 
 //extra
+
+Qfloat Qfloat::operator = (const Qfloat& T)
+{
+	for (int i = 0; i < 4; i++)
+		this->data[i] = T.data[i];
+
+	return *this;
+}
+
+string Qfloat::getBitBetween(int j, int i) {//j<=i
+	string ans;
+	for (int k = j; k <= i; k++)
+		ans = to_string(this->GetBit(i)) + ans;
+	return ans;
+}
+
+string Qfloat::multi2String(string str, string str1) {
+	int n = str.size(); int m = str1.size();
+	string ans = "";
+	for (int i = 0; i < n; i++)
+		ans += "0";
+
+
+	for (int i = m - 1; i >= 0; i--) {
+		if (str1[i] == '1') {
+			ans = sum2String(ans, str);
+		}
+		str = str + "0";
+	}
+
+	return ans;
+
+}
+
+string Qfloat::sum2String(string str, string str1) {
+
+	string ans;
+
+	while (str.size() < str1.size())
+		str = "0" + str;
+
+	bool du = 0;
+	for (int i = str.size() - 1; i >= 0; i--) {
+		char ch = str[i], ck = str1[i];
+		if (du == 0) {
+			if ((ch == '0') && (ck == '0'))
+				ans = "0" + ans;
+			else if ((ch == '1') && (ck == '0') || (ch == '0') && (ck == '1'))
+				ans = "1" + ans;
+			else {
+				ans = "0" + ans;
+				du = 1;
+			}
+		}
+		else {
+			if ((ch == '0') && (ck == '0')) {
+				ans = "1" + ans;
+				du = 0;
+			}
+			else if ((ch == '1') && (ck == '0') || (ch == '0') && (ck == '1')) {
+				ans = "0" + ans;
+			}
+			else
+				ans = "1" + ans;
+		}
+	}
+	if (du == 1) ans = "1" + ans;
+	return ans;
+}
+
 string Qfloat::getSign() {
 	if (GetBit(127)) return "1";
 	return "0";

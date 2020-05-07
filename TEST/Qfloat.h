@@ -24,15 +24,21 @@ public:
 	string GetDecString();
 	string GetBinString();
 
-	Qfloat operator+(Qfloat);//just on positive number
+	Qfloat operator+(Qfloat);
 	Qfloat operator-(Qfloat);
+	Qfloat operator*(Qfloat);
 	Qfloat operator/(Qfloat);
 
 	//extra
+	Qfloat operator = (const Qfloat&);
+	string getBitBetween(int i, int j); //i>=j;
 	string getSign();//print sign
 	string getExponent();//print exponent
 	string getSignificand();
 	int GetExponentDec();
+
+	string multi2String(string, string);
+	string sum2String(string, string);
 };
 
 #endif
