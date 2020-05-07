@@ -4,6 +4,8 @@
 using namespace System;
 using namespace System::Windows::Forms;
 
+// function to interact with QInt
+
 QInt arithmeticQInt(std::string base, std::string x, char o, std::string y)
 {
 	QInt a, b;
@@ -127,7 +129,59 @@ std::string processQInt(std::string inputString)
 }
 
 
-void proStream(StreamReader^ input, StreamWriter^ output)
+// function to interact with Qfloat
+
+Qfloat arithmeticQfloat(std::string base, std::string x, char o, std::string y)
+{
+	Qfloat a, b;
+
+	a.ScanQfloat(x, base);
+	b.ScanQfloat(y, base);
+
+	switch (o)
+	{
+	case '+':
+		return (a + b);
+	case '-':
+		return (a - b);
+	case '*':
+		return (a * b);
+	case '/':
+		return (a / b);
+	default:
+		return a;
+	}
+}
+
+std::string convertQfloat(std::string a, std::string b, std::string x)
+{
+	Qfloat Q;
+
+	Q.ScanQfloat(x, a);
+
+	return Q.GetQfloat(b);
+}
+
+std::string processQfloat(std::string inputString)
+{
+	Qfloat ans;
+
+	std::string a, b, c, d;
+
+	std::stringstream ss(inputString);
+
+	ss >> a >> b >> c;
+
+	if (c == "+" || c == "-" || c == "*" || c == "/")
+	{
+		ss >> d;
+		return arithmeticQfloat(a, b, c[0], d).GetQfloat(a);
+	}
+	else return convertQfloat(a, b, c);
+}
+
+
+void proStream(StreamReader^ input, StreamWriter^ output, std::string (*processQ)(std::string))
 {
 	while (1)
 	{
@@ -137,7 +191,7 @@ void proStream(StreamReader^ input, StreamWriter^ output)
 		marshal_context context;
 		std::string inString = context.marshal_as<std::string>(inStream);
 
-		std::string ans = processQInt(inString);
+		std::string ans = processQ(inString);
 
 		String^ outStream = gcnew String(ans.c_str());
 
@@ -160,9 +214,17 @@ void Main(array<String^>^ args)
 		StreamReader^ input = gcnew StreamReader(args[0]);
 		StreamWriter^ output = gcnew StreamWriter(args[1]);
 		
-		proStream(input, output);
+		if (args[2] == "1") proStream(input, output, processQInt);
+		if (args[2] == "2") proStream(input, output, processQfloat);
 
 		output->Close();
 		input->Close();
 	}	
+
+	/*Qfloat a, b;
+
+	a.ScanDecString("3480239462.2643114363");
+	b.ScanDecString("1436836209.21515123246");
+
+	std::string z = (a * b).GetDecString();*/
 }

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "QInt.h"
+#include "Qfloat.h"
 #include <sstream>
 #include <msclr\marshal_cppstd.h>
 
@@ -24,6 +25,7 @@ namespace WinForm
 		{
 			InitializeComponent();
 			RadixBox->Text = "DEC";
+			DataType->Text = "QInt";
 		}
 
 	protected:
@@ -75,6 +77,7 @@ namespace WinForm
 		System::Windows::Forms::Button^ ButtonE;
 		System::Windows::Forms::Button^ ButtonF;
 		System::Windows::Forms::Button^ FloatingPoint;
+		System::Windows::Forms::ComboBox^ DataType;
 
 		System::ComponentModel::Container^ components;
 
@@ -124,6 +127,7 @@ namespace WinForm
 			this->ButtonE = (gcnew System::Windows::Forms::Button());
 			this->ButtonF = (gcnew System::Windows::Forms::Button());
 			this->FloatingPoint = (gcnew System::Windows::Forms::Button());
+			this->DataType = (gcnew System::Windows::Forms::ComboBox());
 			this->SuspendLayout();
 			// 
 			// Param1
@@ -647,12 +651,27 @@ namespace WinForm
 			this->FloatingPoint->Text = L".";
 			this->FloatingPoint->UseVisualStyleBackColor = true;
 			// 
+			// DataType
+			// 
+			this->DataType->AutoCompleteCustomSource->AddRange(gcnew cli::array< System::String^  >(2) { L"QInt", L"QFloat" });
+			this->DataType->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->DataType->FormattingEnabled = true;
+			this->DataType->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"QInt", L"QFloat" });
+			this->DataType->Location = System::Drawing::Point(249, 225);
+			this->DataType->Margin = System::Windows::Forms::Padding(6);
+			this->DataType->Name = L"DataType";
+			this->DataType->Size = System::Drawing::Size(228, 37);
+			this->DataType->TabIndex = 41;
+			this->DataType->SelectedIndexChanged += gcnew System::EventHandler(this, &TestForm::DataType_SelectedIndexChanged);
+			// 
 			// TestForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(12, 25);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnablePreventFocusChange;
 			this->ClientSize = System::Drawing::Size(749, 829);
+			this->Controls->Add(this->DataType);
 			this->Controls->Add(this->FloatingPoint);
 			this->Controls->Add(this->ButtonF);
 			this->Controls->Add(this->ButtonE);
@@ -709,7 +728,7 @@ namespace WinForm
 		{
 		}
 
-		QInt RadixConverter(String^ input)
+		QInt RadixQIntConverter(String^ input)
 		{
 			QInt Q;
 
@@ -722,6 +741,19 @@ namespace WinForm
 			return Q;
 		}
 
+		Qfloat RadixQfloatConverter(String^ input)
+		{
+			Qfloat Q;
+
+			marshal_context context;
+
+			std::string x = context.marshal_as<std::string>(input);
+			std::string b = context.marshal_as<std::string>(Base);
+			Q.ScanQfloat(x, b);
+
+			return Q;
+		}
+
 		String^ GetQIntSystemString(QInt Q)
 		{
 			marshal_context context;
@@ -729,6 +761,15 @@ namespace WinForm
 			std::string b = context.marshal_as<std::string>(Base);
 
 			return gcnew String(Q.GetQInt(b).c_str());
+		}
+
+		String^ GetQfloatSystemString(Qfloat Q)
+		{
+			marshal_context context;
+
+			std::string b = context.marshal_as<std::string>(Base);
+
+			return gcnew String(Q.GetQfloat(b).c_str());
 		}
 
 		void ButtonControl()
@@ -791,13 +832,43 @@ namespace WinForm
 			}
 		}
 
+		System::Void DataType_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) 
+		{
+			bool isEnable = true;
+
+			if (DataType->Text == "QFloat")
+			{
+				isEnable = false;
+				RadixBox->Items->Remove("HEX");
+				RadixBox->Text = "DEC";
+			}
+			else if (!RadixBox->Items->Contains("HEX"))
+				RadixBox->Items->Add("HEX");
+
+			AndButton->Enabled = isEnable;
+			OrButton->Enabled = isEnable;
+			XorButton->Enabled = isEnable;
+			NotButton->Enabled = isEnable;
+			ModButton->Enabled = isEnable;
+
+			LeftShift->Enabled = isEnable;
+			RightShift->Enabled = isEnable;
+			RotateLeft->Enabled = isEnable;
+			RotateRight->Enabled = isEnable;
+
+			GreaterEqualToButton->Enabled = isEnable;
+			LessEqualToButton->Enabled = isEnable;
+			GreaterThanButton->Enabled = isEnable;
+			LessThanButton->Enabled = isEnable;
+		}
+
 		System::Void RadixBox_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e)
 		{
 			QInt A, B, C;
 
-			if (Param1->Text != "") A = RadixConverter(Param1->Text);
-			if (Param2->Text != "") B = RadixConverter(Param2->Text);
-			if (Answer->Text != "") C = RadixConverter(Answer->Text);
+			if (Param1->Text != "") A = RadixQIntConverter(Param1->Text);
+			if (Param2->Text != "") B = RadixQIntConverter(Param2->Text);
+			if (Answer->Text != "") C = RadixQIntConverter(Answer->Text);
 
 			if (RadixBox->Text == "BIN") Base = "2";
 			if (RadixBox->Text == "DEC") Base = "10";
@@ -807,48 +878,38 @@ namespace WinForm
 			if (Param1->Text != "") Param1->Text = GetQIntSystemString(A);
 			if (Param2->Text != "") Param2->Text = GetQIntSystemString(B);
 			if (Answer->Text != "") Answer->Text = GetQIntSystemString(C);
+		}
 
+		void Param_KeyPressed(System::Windows::Forms::KeyPressEventArgs^ e)
+		{
+			if (Base == "2" && e->KeyChar != 48 && e->KeyChar != 49 && !Char::IsControl(e->KeyChar))
+			{
+				e->Handled = true;
+			}
 
+			if (Base == "10" && !Char::IsDigit(e->KeyChar) && !Char::IsControl(e->KeyChar))
+			{
+				e->Handled = true;
+			}
+
+			if (Base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F') && !Char::IsControl(e->KeyChar))
+			{
+				e->Handled = true;
+			}
 		}
 
 		System::Void Param1_KeyPressed(System::Object^ sender, System::Windows::Forms::KeyPressEventArgs^ e)
 		{
 			if (Base == "10" && e->KeyChar == '-' && Param1->Text == "") return;
 
-			if (Base == "2" && e->KeyChar != 48 && e->KeyChar != 49 && !Char::IsControl(e->KeyChar))
-			{
-				e->Handled = true;
-			}
-
-			if (Base == "10" && !Char::IsDigit(e->KeyChar) && !Char::IsControl(e->KeyChar))
-			{
-				e->Handled = true;
-			}
-
-			if (Base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F') && !Char::IsControl(e->KeyChar))
-			{
-				e->Handled = true;
-			}
+			Param_KeyPressed(e);
 		}
 
 		System::Void Param2_KeyPressed(System::Object^ sender, System::Windows::Forms::KeyPressEventArgs^ e)
 		{
 			if (Base == "10" && e->KeyChar == '-' && Param2->Text == "") return;
 
-			if (Base == "2" && e->KeyChar != 48 && e->KeyChar != 49 && !Char::IsControl(e->KeyChar))
-			{
-				e->Handled = true;
-			}
-
-			if (Base == "10" && !Char::IsDigit(e->KeyChar) && !Char::IsControl(e->KeyChar))
-			{
-				e->Handled = true;
-			}
-
-			if (Base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F') && !Char::IsControl(e->KeyChar))
-			{
-				e->Handled = true;
-			}
+			Param_KeyPressed(e);
 		}
 
 		System::Void Param1_Clicked(System::Object^ sender, System::EventArgs^ e)
@@ -964,13 +1025,31 @@ namespace WinForm
 			Answer->Text = "";
 		}
 
+		void logicalQfloat(std::string ops)
+		{
+			Qfloat A, B;
+
+			A = RadixQfloatConverter(Param1->Text);
+			B = RadixQfloatConverter(Param2->Text);
+
+			if (ops == "+") return Answer->Text = GetQfloatSystemString(A + B);
+
+			if (ops == "-") return Answer->Text = GetQfloatSystemString(A - B);
+
+			if (ops == "*") return Answer->Text = GetQfloatSystemString(A * B);
+
+			if (ops == "/") return Answer->Text = GetQfloatSystemString(A / B);
+		}
+
 		void logicalProcess(std::string ops)
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
+			if (DataType->Text == "QFloat") return logicalQfloat(ops);
+
 			QInt A, B;
-			A = RadixConverter(Param1->Text);
-			B = RadixConverter(Param2->Text);
+			A = RadixQIntConverter(Param1->Text);
+			B = RadixQIntConverter(Param2->Text);
 
 			if (ops == "+") return Answer->Text = GetQIntSystemString(A + B);
 
@@ -1066,7 +1145,7 @@ namespace WinForm
 		{
 			if (Param1->Text == "") return;
 
-			QInt A; A = RadixConverter(Param1->Text);
+			QInt A; A = RadixQIntConverter(Param1->Text);
 
 			Answer->Text = GetQIntSystemString(~A);
 		}
@@ -1096,7 +1175,7 @@ namespace WinForm
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
-			QInt A; A = RadixConverter(Param1->Text);
+			QInt A; A = RadixQIntConverter(Param1->Text);
 
 			int B; B = IntConverter(Param2->Text);
 
@@ -1114,7 +1193,7 @@ namespace WinForm
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
-			QInt A; A = RadixConverter(Param1->Text);
+			QInt A; A = RadixQIntConverter(Param1->Text);
 
 			int B; B = IntConverter(Param2->Text);
 
@@ -1132,7 +1211,7 @@ namespace WinForm
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
-			QInt A; A = RadixConverter(Param1->Text);
+			QInt A; A = RadixQIntConverter(Param1->Text);
 
 			int B; B = IntConverter(Param2->Text);
 
@@ -1150,7 +1229,7 @@ namespace WinForm
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
-			QInt A; A = RadixConverter(Param1->Text);
+			QInt A; A = RadixQIntConverter(Param1->Text);
 
 			int B; B = IntConverter(Param2->Text);
 
@@ -1169,5 +1248,6 @@ namespace WinForm
 		}
 
 
-	};
+	
+};
 }

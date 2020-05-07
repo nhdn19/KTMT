@@ -13,6 +13,7 @@ private:
 
 public:
 	QInt();
+	QInt(std::string str) { ScanDecString(str); }
 
 	void ZeroBits(); // for reuse QInt
 	void OffBit(int i); // bit_i = 0
@@ -55,5 +56,9 @@ public:
 	bool operator >= (QInt);
 	bool operator == (QInt);
 };
+
+int divideBy2(std::string& str);
+void multiplyBy2(std::string& str);
+void add1ToString(std::string& str);
 
 #endif
