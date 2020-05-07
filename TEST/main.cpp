@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "QInt.h"
+#include "Qfloat.h"
 
 using namespace std;
 
@@ -30,7 +31,6 @@ string BinToHex(string x)
 	Q.ScanBinString(x);
 	return Q.GetHexString();
 }
-
 
 QInt arithmeticQInt(string base, string x, char o, string y)
 {
@@ -67,7 +67,7 @@ QInt logicQInt(string base, string x, char o, string y)
 	switch (o)
 	{
 	case '~':
-		return (~ a);
+		return (~a);
 	case '&':
 		return (a & b);
 	case '|':
@@ -110,12 +110,11 @@ bool compareQInt(string base, string x, string o, string y)
 string convertQInt(string a, string b, string x)
 {
 	QInt Q;
-	
+
 	Q.ScanQInt(x, a);
 
 	return Q.GetQInt(b);
 }
-
 
 void processQInt()
 {
@@ -167,7 +166,7 @@ int main(int argc, char* argv[])
 	// int a = -2147483649;
 	// int b = -2147483646;
 	// cout << a + b << endl;
-
+	/*
 	if (argc == 3)
 	{
 		freopen(argv[1], "r", stdin);
@@ -176,6 +175,17 @@ int main(int argc, char* argv[])
 		if (argv[3][0] == '1')
 			while (!cin.eof()) processQInt();
 	}
-
+	*/
+	//Qfloat pos, neg;
+	//pos.ScanDecString("5.75");
+	//neg.ScanDecString("-5.75");
+	//cout << pos.GetBinString() << endl << neg.GetBinString() << endl;
+	//123.135 //323.25
+	////////////TEST
+	Qfloat f, f1, f2;
+	f1.ScanDecString("0.038734");
+	f2.ScanDecString("-0.234734");
+	f = f1 / f2;
+	cout << f.GetDecString() << endl;
 	return 0;
 }

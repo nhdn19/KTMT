@@ -17,6 +17,7 @@ private:
 
 public:
 	QInt();
+	QInt(string str) { ScanDecString(str); }
 
 	void ZeroBits(); // for reuse QInt
 	void OffBit(int i); // bit_i = 0
@@ -63,5 +64,9 @@ public:
 	//extra
 	void printData();
 };
+
+int divideBy2(string& str);
+void multiplyBy2(string& str);
+void add1ToString(string& str);
 
 #endif
