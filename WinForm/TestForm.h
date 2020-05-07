@@ -30,10 +30,7 @@ namespace WinForm
 		~TestForm() { if (components) delete components; }
 
 	private:
-		bool isFocusedBox1 = false;
-		bool isFocusedBox2 = false;
-		String^ base = "";
-		char lockedOperator = ' ';
+		String^ Base = "";
 
 	private: 
 		System::Windows::Forms::TextBox^ Param1;
@@ -473,6 +470,7 @@ namespace WinForm
 			this->RotateLeft->TabIndex = 26;
 			this->RotateLeft->Text = L"ROL";
 			this->RotateLeft->UseVisualStyleBackColor = true;
+			this->RotateLeft->Click += gcnew System::EventHandler(this, &TestForm::RotateLeft_Click);
 			// 
 			// RotateRight
 			// 
@@ -485,6 +483,7 @@ namespace WinForm
 			this->RotateRight->TabIndex = 27;
 			this->RotateRight->Text = L"ROR";
 			this->RotateRight->UseVisualStyleBackColor = true;
+			this->RotateRight->Click += gcnew System::EventHandler(this, &TestForm::RotateRight_Click);
 			// 
 			// LeftShift
 			// 
@@ -678,48 +677,66 @@ namespace WinForm
 		}
 
 #pragma endregion
-
 	private: 
-		System::Void Lock_Operator(char O) // custom function
-		{
-			lockedOperator = O;
-			AddButton->Enabled = false;
-			SubtractButton->Enabled = false;
-			MultiplyButton->Enabled = false;
-			DivideButton->Enabled = false;
-			ModButton->Enabled = false;
-		}
 
 		System::Void TestForm_Load(System::Object^ sender, System::EventArgs^ e) 
 		{
 		}
 
+		QInt RadixConverter(String^ input)
+		{
+			QInt Q;
+
+			marshal_context context;
+
+			std::string x = context.marshal_as<std::string>(input);
+			std::string b = context.marshal_as<std::string>(Base);
+			Q.ScanQInt(x, b);
+
+			return Q;
+		}
+
+		String^ GetQIntSystemString(QInt Q)
+		{
+			marshal_context context;
+
+			std::string b = context.marshal_as<std::string>(Base);
+
+			return gcnew String(Q.GetQInt(b).c_str());
+		}
+
 		System::Void RadixBox_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) 
 		{
-			if (RadixBox->Text == "BIN") base = "2";
-			if (RadixBox->Text == "DEC") base = "10";
-			if (RadixBox->Text == "HEX") base = "16";
+			QInt A, B, C;
 
-			Param1->Text = "";
-			Param2->Text = "";
-			Answer->Text = "";
+			if (Param1->Text != "") A = RadixConverter(Param1->Text);
+			if (Param2->Text != "") B = RadixConverter(Param2->Text);
+			if (Answer->Text != "") C = RadixConverter(Answer->Text);
+			
+			if (RadixBox->Text == "BIN") Base = "2";
+			if (RadixBox->Text == "DEC") Base = "10";
+			if (RadixBox->Text == "HEX") Base = "16";
+
+			if (Param1->Text != "") Param1->Text = GetQIntSystemString(A);
+			if (Param2->Text != "") Param2->Text = GetQIntSystemString(B);
+			if (Answer->Text != "") Answer->Text = GetQIntSystemString(C);
 		}
 
 		System::Void Param1_KeyPressed(System::Object^ sender, System::Windows::Forms::KeyPressEventArgs^ e)
 		{
-			if (base == "10" && e->KeyChar == '-' && Param1->Text == "") return;
+			if (Base == "10" && e->KeyChar == '-' && Param1->Text == "") return;
 
-			if (base == "2" && e->KeyChar != 48 && e->KeyChar != 49 && !Char::IsControl(e->KeyChar))
+			if (Base == "2" && e->KeyChar != 48 && e->KeyChar != 49 && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
 			}
 
-			if (base == "10" && !Char::IsDigit(e->KeyChar) && !Char::IsControl(e->KeyChar))
+			if (Base == "10" && !Char::IsDigit(e->KeyChar) && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
 			}
 
-			if (base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F' ) && !Char::IsControl(e->KeyChar))
+			if (Base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F' ) && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
 			}
@@ -727,19 +744,19 @@ namespace WinForm
 
 		System::Void Param2_KeyPressed(System::Object^ sender, System::Windows::Forms::KeyPressEventArgs^ e)
 		{
-			if (base == "10" && e->KeyChar == '-' && Param2->Text == "") return;
+			if (Base == "10" && e->KeyChar == '-' && Param2->Text == "") return;
 
-			if (base == "2" && e->KeyChar != 48 && e->KeyChar != 49 && !Char::IsControl(e->KeyChar))
+			if (Base == "2" && e->KeyChar != 48 && e->KeyChar != 49 && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
 			}
 
-			if (base == "10" && !Char::IsDigit(e->KeyChar) && !Char::IsControl(e->KeyChar))
+			if (Base == "10" && !Char::IsDigit(e->KeyChar) && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
 			}
 
-			if (base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F') && !Char::IsControl(e->KeyChar))
+			if (Base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F') && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
 			}
@@ -747,14 +764,10 @@ namespace WinForm
 
 		System::Void Param1_TextChanged(System::Object^ sender, System::EventArgs^ e) 
 		{
-			isFocusedBox1 = true;
-			isFocusedBox2 = false;
 		}
 
 		System::Void Param2_TextChanged(System::Object^ sender, System::EventArgs^ e) 
 		{
-			isFocusedBox1 = false;
-			isFocusedBox2 = true;
 		}
 
 		System::Void Answer_TextChanged(System::Object^ sender, System::EventArgs^ e) {
@@ -790,24 +803,19 @@ namespace WinForm
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
-			marshal_context context;
-			std::string x = context.marshal_as<std::string>(Param1->Text);
-			std::string y = context.marshal_as<std::string>(Param2->Text);
-			std::string b = context.marshal_as<std::string>(base);
-
 			QInt A, B;
-			A.ScanQInt(x, b);
-			B.ScanQInt(y, b);
+			A = RadixConverter(Param1->Text);
+			B = RadixConverter(Param2->Text);
 
-			if (ops == "+") return Answer->Text = gcnew String((A + B).GetQInt(b).c_str());
+			if (ops == "+") return Answer->Text = GetQIntSystemString(A + B);
 
-			if (ops == "-") return Answer->Text = gcnew String((A - B).GetQInt(b).c_str());
+			if (ops == "-") return Answer->Text = GetQIntSystemString(A - B);
 
-			if (ops == "*") return Answer->Text = gcnew String((A * B).GetQInt(b).c_str());
+			if (ops == "*") return Answer->Text = GetQIntSystemString(A * B);
 
-			if (ops == "/") return Answer->Text = gcnew String((A / B).GetQInt(b).c_str());
+			if (ops == "/") return Answer->Text = GetQIntSystemString(A / B);
 
-			if (ops == "%") return Answer->Text = gcnew String((A % B).GetQInt(b).c_str());
+			if (ops == "%") return Answer->Text = GetQIntSystemString(A % B);
 
 			if (ops == ">") return Answer->Text = (A > B) ? "True" : "False";
 
@@ -817,11 +825,11 @@ namespace WinForm
 
 			if (ops == "<=") return Answer->Text = (A <= B) ? "True" : "False";
 
-			if (ops == "&") return Answer->Text = gcnew String((A & B).GetQInt(b).c_str());
+			if (ops == "&") return Answer->Text = GetQIntSystemString(A & B);
 
-			if (ops == "|") return Answer->Text = gcnew String((A | B).GetQInt(b).c_str());
+			if (ops == "|") return Answer->Text = GetQIntSystemString(A | B);
 
-			if (ops == "^") return Answer->Text = gcnew String((A ^ B).GetQInt(b).c_str());
+			if (ops == "^") return Answer->Text = GetQIntSystemString(A ^ B);
 
 		}
 	
@@ -893,59 +901,68 @@ namespace WinForm
 		{
 			if (Param1->Text == "") return;
 
+			QInt A; A = RadixConverter(Param1->Text);
+
+			Answer->Text = GetQIntSystemString(~A);
+		}
+
+		int IntConverter(String^ input)
+		{
 			marshal_context context;
-			std::string x = context.marshal_as<std::string>(Param1->Text);
-			std::string b = context.marshal_as<std::string>(base);
+			std::string x = context.marshal_as<std::string>(input);
+			std::stringstream ss(x);
 
-			QInt A, B;
-			A.ScanQInt(x, b);
-
-			Answer->Text = gcnew String((~A).GetQInt(b).c_str());
+			int k; ss >> k; 
+			
+			return k > 0 ? k : 0;
 		}
 
 		System::Void LeftShift_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
-			marshal_context context;
-			std::string x = context.marshal_as<std::string>(Param1->Text);
-			std::string y = context.marshal_as<std::string>(Param2->Text);
-			std::string b = context.marshal_as<std::string>(base);
+			QInt A; A = RadixConverter(Param1->Text);
 
-			std::stringstream ss(y);
+			int B; B = IntConverter(Param2->Text);
 
-			QInt A;
-			A.ScanQInt(x, b);
-
-			int B; ss >> B;
-
-			Answer->Text = gcnew String((A << B).GetQInt(b).c_str());
+			Answer->Text = GetQIntSystemString(A << B);
 		}
 
 		System::Void RightShift_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-
 			if (Param1->Text == "" || Param2->Text == "") return;
 
-			marshal_context context;
-			std::string x = context.marshal_as<std::string>(Param1->Text);
-			std::string y = context.marshal_as<std::string>(Param2->Text);
-			std::string b = context.marshal_as<std::string>(base);
+			QInt A; A = RadixConverter(Param1->Text);
 
-			std::stringstream ss(y);
+			int B; B = IntConverter(Param2->Text);
 
-			QInt A;
-			A.ScanQInt(x, b);
+			Answer->Text = GetQIntSystemString(A >> B);
+		}
 
-			int B; ss >> B;
+		System::Void RotateLeft_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			if (Param1->Text == "" || Param2->Text == "") return;
 
-			Answer->Text = gcnew String((A >> B).GetQInt(b).c_str());
+			QInt A; A = RadixConverter(Param1->Text);
+
+			int B; B = IntConverter(Param2->Text);
+
+			Answer->Text = GetQIntSystemString(A.rol(B));
+		}
+
+		System::Void RotateRight_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			if (Param1->Text == "" || Param2->Text == "") return;
+
+			QInt A; A = RadixConverter(Param1->Text);
+
+			int B; B = IntConverter(Param2->Text);
+
+			Answer->Text = GetQIntSystemString(A.ror(B));
 		}
 
 		System::Void EqualButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
-
-
 		}
 };
 }

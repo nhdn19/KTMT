@@ -59,6 +59,30 @@ void add1ToString(std::string& str) // + 1 vao chuoi so thap phan
 	}
 }
 
+std::string DecToBin(QInt Q)
+{
+	return Q.GetBinString();
+}
+
+std::string DecToHex(QInt Q)
+{
+	return Q.GetHexString();
+}
+
+QInt BinToDec(std::string x)
+{
+	QInt Q;
+	Q.ScanBinString(x);
+	return Q;
+}
+
+std::string BinToHex(std::string x)
+{
+	QInt Q;
+	Q.ScanBinString(x);
+	return Q.GetHexString();
+}
+
 QInt::QInt()
 {
 	data[0] = data[1] = data[2] = data[3] = 0;
@@ -529,7 +553,40 @@ QInt QInt::operator << (int k)
 	return temp;
 }
 
+QInt QInt::ror(int k)
+{
+	QInt temp;
 
+	k = k % size; 
+	
+	if (k == 0) return *this;
+
+	for (int i = k; i < size; i++)
+		if (GetBit(i)) temp.SetBit(i - k);
+
+	for (int i = 0; i < k; i++)
+		if (GetBit(i)) temp.SetBit(size - k + i);
+
+	return temp;
+}
+
+
+QInt QInt::rol(int k)
+{
+	QInt temp;
+
+	k = k % size;
+
+	if (k == 0) return *this;
+
+	for (int i = k; i < size; i++)
+		if (GetBit(i - k)) temp.SetBit(i);
+
+	for (int i = 0; i < k; i++)
+		if (GetBit(size - k + i)) temp.SetBit(i);
+
+	return temp;
+}
 // comparison operator
 
 bool QInt::operator < (QInt T)
