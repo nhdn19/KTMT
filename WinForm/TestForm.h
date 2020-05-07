@@ -7,7 +7,7 @@
 using namespace System::IO;
 using namespace msclr::interop;
 
-namespace WinForm 
+namespace WinForm
 {
 
 	using namespace System;
@@ -20,8 +20,8 @@ namespace WinForm
 	public ref class TestForm : public System::Windows::Forms::Form
 	{
 	public:
-		TestForm(void) 
-		{ 
+		TestForm(void)
+		{
 			InitializeComponent();
 			RadixBox->Text = "DEC";
 		}
@@ -31,8 +31,10 @@ namespace WinForm
 
 	private:
 		String^ Base = "";
+		bool isFocusedBox1 = true;
+		bool isFocusedBox2 = false;
 
-	private: 
+	private:
 		System::Windows::Forms::TextBox^ Param1;
 		System::Windows::Forms::TextBox^ Param2;
 		System::Windows::Forms::Button^ Button0;
@@ -72,10 +74,11 @@ namespace WinForm
 		System::Windows::Forms::Button^ ButtonD;
 		System::Windows::Forms::Button^ ButtonE;
 		System::Windows::Forms::Button^ ButtonF;
+		System::Windows::Forms::Button^ FloatingPoint;
 
-		   System::ComponentModel::Container^ components;
+		System::ComponentModel::Container^ components;
 
-	
+
 
 #pragma region Windows Form Designer generated code
 
@@ -120,42 +123,45 @@ namespace WinForm
 			this->ButtonD = (gcnew System::Windows::Forms::Button());
 			this->ButtonE = (gcnew System::Windows::Forms::Button());
 			this->ButtonF = (gcnew System::Windows::Forms::Button());
+			this->FloatingPoint = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// Param1
 			// 
-			this->Param1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Param1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->Param1->Location = System::Drawing::Point(13, 13);
 			this->Param1->Margin = System::Windows::Forms::Padding(4);
 			this->Param1->Name = L"Param1";
-			this->Param1->Size = System::Drawing::Size(1308, 80);
+			this->Param1->Size = System::Drawing::Size(720, 62);
 			this->Param1->TabIndex = 0;
 			this->Param1->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			this->Param1->Click += gcnew System::EventHandler(this, &TestForm::Param1_Clicked);
 			this->Param1->TextChanged += gcnew System::EventHandler(this, &TestForm::Param1_TextChanged);
 			this->Param1->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TestForm::Param1_KeyPressed);
 			// 
 			// Param2
 			// 
-			this->Param2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Param2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Param2->Location = System::Drawing::Point(12, 101);
+			this->Param2->Location = System::Drawing::Point(13, 83);
 			this->Param2->Margin = System::Windows::Forms::Padding(4);
 			this->Param2->Name = L"Param2";
-			this->Param2->Size = System::Drawing::Size(1308, 80);
+			this->Param2->Size = System::Drawing::Size(720, 62);
 			this->Param2->TabIndex = 1;
 			this->Param2->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			this->Param2->Click += gcnew System::EventHandler(this, &TestForm::Param2_Clicked);
 			this->Param2->TextChanged += gcnew System::EventHandler(this, &TestForm::Param2_TextChanged);
 			this->Param2->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TestForm::Param2_KeyPressed);
 			// 
 			// Button1
 			// 
-			this->Button1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Button1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Button1->Location = System::Drawing::Point(171, 831);
+			this->Button1->Location = System::Drawing::Point(13, 648);
 			this->Button1->Margin = System::Windows::Forms::Padding(4);
 			this->Button1->Name = L"Button1";
-			this->Button1->Size = System::Drawing::Size(150, 100);
+			this->Button1->Size = System::Drawing::Size(110, 80);
 			this->Button1->TabIndex = 2;
 			this->Button1->Text = L"1";
 			this->Button1->UseVisualStyleBackColor = true;
@@ -163,12 +169,12 @@ namespace WinForm
 			// 
 			// Button2
 			// 
-			this->Button2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Button2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Button2->Location = System::Drawing::Point(329, 831);
+			this->Button2->Location = System::Drawing::Point(131, 648);
 			this->Button2->Margin = System::Windows::Forms::Padding(4);
 			this->Button2->Name = L"Button2";
-			this->Button2->Size = System::Drawing::Size(150, 100);
+			this->Button2->Size = System::Drawing::Size(110, 80);
 			this->Button2->TabIndex = 3;
 			this->Button2->Text = L"2";
 			this->Button2->UseVisualStyleBackColor = true;
@@ -176,12 +182,12 @@ namespace WinForm
 			// 
 			// Button3
 			// 
-			this->Button3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Button3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Button3->Location = System::Drawing::Point(487, 831);
+			this->Button3->Location = System::Drawing::Point(249, 648);
 			this->Button3->Margin = System::Windows::Forms::Padding(4);
 			this->Button3->Name = L"Button3";
-			this->Button3->Size = System::Drawing::Size(150, 100);
+			this->Button3->Size = System::Drawing::Size(110, 80);
 			this->Button3->TabIndex = 4;
 			this->Button3->Text = L"3";
 			this->Button3->UseVisualStyleBackColor = true;
@@ -189,12 +195,12 @@ namespace WinForm
 			// 
 			// Button4
 			// 
-			this->Button4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Button4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Button4->Location = System::Drawing::Point(171, 723);
+			this->Button4->Location = System::Drawing::Point(13, 560);
 			this->Button4->Margin = System::Windows::Forms::Padding(4);
 			this->Button4->Name = L"Button4";
-			this->Button4->Size = System::Drawing::Size(150, 100);
+			this->Button4->Size = System::Drawing::Size(110, 80);
 			this->Button4->TabIndex = 5;
 			this->Button4->Text = L"4";
 			this->Button4->UseVisualStyleBackColor = true;
@@ -202,24 +208,25 @@ namespace WinForm
 			// 
 			// Button5
 			// 
-			this->Button5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Button5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Button5->Location = System::Drawing::Point(329, 723);
+			this->Button5->Location = System::Drawing::Point(131, 560);
 			this->Button5->Margin = System::Windows::Forms::Padding(4);
 			this->Button5->Name = L"Button5";
-			this->Button5->Size = System::Drawing::Size(150, 100);
+			this->Button5->Size = System::Drawing::Size(110, 80);
 			this->Button5->TabIndex = 6;
 			this->Button5->Text = L"5";
 			this->Button5->UseVisualStyleBackColor = true;
+			this->Button5->Click += gcnew System::EventHandler(this, &TestForm::Button5_Click);
 			// 
 			// Button6
 			// 
-			this->Button6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Button6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Button6->Location = System::Drawing::Point(487, 723);
+			this->Button6->Location = System::Drawing::Point(249, 560);
 			this->Button6->Margin = System::Windows::Forms::Padding(4);
 			this->Button6->Name = L"Button6";
-			this->Button6->Size = System::Drawing::Size(150, 100);
+			this->Button6->Size = System::Drawing::Size(110, 80);
 			this->Button6->TabIndex = 7;
 			this->Button6->Text = L"6";
 			this->Button6->UseVisualStyleBackColor = true;
@@ -227,12 +234,12 @@ namespace WinForm
 			// 
 			// Button7
 			// 
-			this->Button7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Button7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Button7->Location = System::Drawing::Point(171, 615);
+			this->Button7->Location = System::Drawing::Point(13, 472);
 			this->Button7->Margin = System::Windows::Forms::Padding(4);
 			this->Button7->Name = L"Button7";
-			this->Button7->Size = System::Drawing::Size(150, 100);
+			this->Button7->Size = System::Drawing::Size(110, 80);
 			this->Button7->TabIndex = 8;
 			this->Button7->Text = L"7";
 			this->Button7->UseVisualStyleBackColor = true;
@@ -240,12 +247,12 @@ namespace WinForm
 			// 
 			// Button8
 			// 
-			this->Button8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Button8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Button8->Location = System::Drawing::Point(329, 615);
+			this->Button8->Location = System::Drawing::Point(131, 472);
 			this->Button8->Margin = System::Windows::Forms::Padding(4);
 			this->Button8->Name = L"Button8";
-			this->Button8->Size = System::Drawing::Size(150, 100);
+			this->Button8->Size = System::Drawing::Size(110, 80);
 			this->Button8->TabIndex = 9;
 			this->Button8->Text = L"8";
 			this->Button8->UseVisualStyleBackColor = true;
@@ -253,12 +260,12 @@ namespace WinForm
 			// 
 			// Button9
 			// 
-			this->Button9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Button9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Button9->Location = System::Drawing::Point(487, 615);
+			this->Button9->Location = System::Drawing::Point(249, 472);
 			this->Button9->Margin = System::Windows::Forms::Padding(4);
 			this->Button9->Name = L"Button9";
-			this->Button9->Size = System::Drawing::Size(150, 100);
+			this->Button9->Size = System::Drawing::Size(110, 80);
 			this->Button9->TabIndex = 10;
 			this->Button9->Text = L"9";
 			this->Button9->UseVisualStyleBackColor = true;
@@ -266,25 +273,25 @@ namespace WinForm
 			// 
 			// Answer
 			// 
-			this->Answer->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Answer->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Answer->Location = System::Drawing::Point(12, 189);
+			this->Answer->Location = System::Drawing::Point(13, 153);
 			this->Answer->Margin = System::Windows::Forms::Padding(4);
 			this->Answer->Name = L"Answer";
 			this->Answer->ReadOnly = true;
-			this->Answer->Size = System::Drawing::Size(1308, 80);
+			this->Answer->Size = System::Drawing::Size(720, 62);
 			this->Answer->TabIndex = 11;
 			this->Answer->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			this->Answer->TextChanged += gcnew System::EventHandler(this, &TestForm::Answer_TextChanged);
 			// 
 			// AddButton
 			// 
-			this->AddButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->AddButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->AddButton->Location = System::Drawing::Point(673, 615);
+			this->AddButton->Location = System::Drawing::Point(505, 296);
 			this->AddButton->Margin = System::Windows::Forms::Padding(4);
 			this->AddButton->Name = L"AddButton";
-			this->AddButton->Size = System::Drawing::Size(150, 100);
+			this->AddButton->Size = System::Drawing::Size(110, 80);
 			this->AddButton->TabIndex = 12;
 			this->AddButton->Text = L"+";
 			this->AddButton->UseVisualStyleBackColor = true;
@@ -292,12 +299,12 @@ namespace WinForm
 			// 
 			// MultiplyButton
 			// 
-			this->MultiplyButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular,
+			this->MultiplyButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular,
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->MultiplyButton->Location = System::Drawing::Point(673, 723);
+			this->MultiplyButton->Location = System::Drawing::Point(505, 472);
 			this->MultiplyButton->Margin = System::Windows::Forms::Padding(4);
 			this->MultiplyButton->Name = L"MultiplyButton";
-			this->MultiplyButton->Size = System::Drawing::Size(150, 100);
+			this->MultiplyButton->Size = System::Drawing::Size(110, 80);
 			this->MultiplyButton->TabIndex = 13;
 			this->MultiplyButton->Text = L"×";
 			this->MultiplyButton->UseVisualStyleBackColor = true;
@@ -305,12 +312,12 @@ namespace WinForm
 			// 
 			// SubtractButton
 			// 
-			this->SubtractButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular,
+			this->SubtractButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular,
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->SubtractButton->Location = System::Drawing::Point(831, 615);
+			this->SubtractButton->Location = System::Drawing::Point(505, 384);
 			this->SubtractButton->Margin = System::Windows::Forms::Padding(4);
 			this->SubtractButton->Name = L"SubtractButton";
-			this->SubtractButton->Size = System::Drawing::Size(150, 100);
+			this->SubtractButton->Size = System::Drawing::Size(110, 80);
 			this->SubtractButton->TabIndex = 14;
 			this->SubtractButton->Text = L"−";
 			this->SubtractButton->UseVisualStyleBackColor = true;
@@ -318,12 +325,12 @@ namespace WinForm
 			// 
 			// DivideButton
 			// 
-			this->DivideButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->DivideButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->DivideButton->Location = System::Drawing::Point(831, 723);
+			this->DivideButton->Location = System::Drawing::Point(505, 560);
 			this->DivideButton->Margin = System::Windows::Forms::Padding(4);
 			this->DivideButton->Name = L"DivideButton";
-			this->DivideButton->Size = System::Drawing::Size(150, 100);
+			this->DivideButton->Size = System::Drawing::Size(110, 80);
 			this->DivideButton->TabIndex = 15;
 			this->DivideButton->Text = L"÷";
 			this->DivideButton->UseVisualStyleBackColor = true;
@@ -331,12 +338,12 @@ namespace WinForm
 			// 
 			// ModButton
 			// 
-			this->ModButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->ModButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->ModButton->Location = System::Drawing::Point(673, 831);
+			this->ModButton->Location = System::Drawing::Point(505, 648);
 			this->ModButton->Margin = System::Windows::Forms::Padding(4);
 			this->ModButton->Name = L"ModButton";
-			this->ModButton->Size = System::Drawing::Size(150, 100);
+			this->ModButton->Size = System::Drawing::Size(110, 80);
 			this->ModButton->TabIndex = 16;
 			this->ModButton->Text = L"⁒";
 			this->ModButton->UseVisualStyleBackColor = true;
@@ -344,12 +351,12 @@ namespace WinForm
 			// 
 			// EqualButton
 			// 
-			this->EqualButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->EqualButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->EqualButton->Location = System::Drawing::Point(831, 831);
+			this->EqualButton->Location = System::Drawing::Point(623, 736);
 			this->EqualButton->Margin = System::Windows::Forms::Padding(4);
 			this->EqualButton->Name = L"EqualButton";
-			this->EqualButton->Size = System::Drawing::Size(150, 100);
+			this->EqualButton->Size = System::Drawing::Size(110, 80);
 			this->EqualButton->TabIndex = 17;
 			this->EqualButton->Text = L"=";
 			this->EqualButton->UseVisualStyleBackColor = true;
@@ -357,12 +364,12 @@ namespace WinForm
 			// 
 			// LessThanButton
 			// 
-			this->LessThanButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular,
+			this->LessThanButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular,
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->LessThanButton->Location = System::Drawing::Point(831, 507);
+			this->LessThanButton->Location = System::Drawing::Point(623, 384);
 			this->LessThanButton->Margin = System::Windows::Forms::Padding(4);
 			this->LessThanButton->Name = L"LessThanButton";
-			this->LessThanButton->Size = System::Drawing::Size(150, 100);
+			this->LessThanButton->Size = System::Drawing::Size(110, 80);
 			this->LessThanButton->TabIndex = 18;
 			this->LessThanButton->Text = L"<";
 			this->LessThanButton->UseVisualStyleBackColor = true;
@@ -370,12 +377,12 @@ namespace WinForm
 			// 
 			// GreaterThanButton
 			// 
-			this->GreaterThanButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular,
+			this->GreaterThanButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular,
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->GreaterThanButton->Location = System::Drawing::Point(673, 507);
+			this->GreaterThanButton->Location = System::Drawing::Point(623, 472);
 			this->GreaterThanButton->Margin = System::Windows::Forms::Padding(4);
 			this->GreaterThanButton->Name = L"GreaterThanButton";
-			this->GreaterThanButton->Size = System::Drawing::Size(150, 100);
+			this->GreaterThanButton->Size = System::Drawing::Size(110, 80);
 			this->GreaterThanButton->TabIndex = 19;
 			this->GreaterThanButton->Text = L">";
 			this->GreaterThanButton->UseVisualStyleBackColor = true;
@@ -383,12 +390,12 @@ namespace WinForm
 			// 
 			// LessEqualToButton
 			// 
-			this->LessEqualToButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular,
+			this->LessEqualToButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular,
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->LessEqualToButton->Location = System::Drawing::Point(831, 399);
+			this->LessEqualToButton->Location = System::Drawing::Point(623, 560);
 			this->LessEqualToButton->Margin = System::Windows::Forms::Padding(4);
 			this->LessEqualToButton->Name = L"LessEqualToButton";
-			this->LessEqualToButton->Size = System::Drawing::Size(150, 100);
+			this->LessEqualToButton->Size = System::Drawing::Size(110, 80);
 			this->LessEqualToButton->TabIndex = 20;
 			this->LessEqualToButton->Text = L"≤";
 			this->LessEqualToButton->UseVisualStyleBackColor = true;
@@ -396,12 +403,12 @@ namespace WinForm
 			// 
 			// GreaterEqualToButton
 			// 
-			this->GreaterEqualToButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular,
+			this->GreaterEqualToButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular,
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->GreaterEqualToButton->Location = System::Drawing::Point(673, 399);
+			this->GreaterEqualToButton->Location = System::Drawing::Point(623, 648);
 			this->GreaterEqualToButton->Margin = System::Windows::Forms::Padding(4);
 			this->GreaterEqualToButton->Name = L"GreaterEqualToButton";
-			this->GreaterEqualToButton->Size = System::Drawing::Size(150, 100);
+			this->GreaterEqualToButton->Size = System::Drawing::Size(110, 80);
 			this->GreaterEqualToButton->TabIndex = 21;
 			this->GreaterEqualToButton->Text = L"≥";
 			this->GreaterEqualToButton->UseVisualStyleBackColor = true;
@@ -409,12 +416,12 @@ namespace WinForm
 			// 
 			// NotButton
 			// 
-			this->NotButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->NotButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->NotButton->Location = System::Drawing::Point(1170, 831);
+			this->NotButton->Location = System::Drawing::Point(131, 384);
 			this->NotButton->Margin = System::Windows::Forms::Padding(4);
 			this->NotButton->Name = L"NotButton";
-			this->NotButton->Size = System::Drawing::Size(150, 100);
+			this->NotButton->Size = System::Drawing::Size(110, 80);
 			this->NotButton->TabIndex = 22;
 			this->NotButton->Text = L"NOT";
 			this->NotButton->UseVisualStyleBackColor = true;
@@ -422,12 +429,12 @@ namespace WinForm
 			// 
 			// XorButton
 			// 
-			this->XorButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->XorButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->XorButton->Location = System::Drawing::Point(1012, 831);
+			this->XorButton->Location = System::Drawing::Point(13, 384);
 			this->XorButton->Margin = System::Windows::Forms::Padding(4);
 			this->XorButton->Name = L"XorButton";
-			this->XorButton->Size = System::Drawing::Size(150, 100);
+			this->XorButton->Size = System::Drawing::Size(110, 80);
 			this->XorButton->TabIndex = 23;
 			this->XorButton->Text = L"XOR";
 			this->XorButton->UseVisualStyleBackColor = true;
@@ -435,12 +442,12 @@ namespace WinForm
 			// 
 			// OrButton
 			// 
-			this->OrButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->OrButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->OrButton->Location = System::Drawing::Point(1170, 723);
+			this->OrButton->Location = System::Drawing::Point(131, 296);
 			this->OrButton->Margin = System::Windows::Forms::Padding(4);
 			this->OrButton->Name = L"OrButton";
-			this->OrButton->Size = System::Drawing::Size(150, 100);
+			this->OrButton->Size = System::Drawing::Size(110, 80);
 			this->OrButton->TabIndex = 24;
 			this->OrButton->Text = L"OR";
 			this->OrButton->UseVisualStyleBackColor = true;
@@ -448,12 +455,12 @@ namespace WinForm
 			// 
 			// AndButton
 			// 
-			this->AndButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->AndButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->AndButton->Location = System::Drawing::Point(1012, 723);
+			this->AndButton->Location = System::Drawing::Point(13, 296);
 			this->AndButton->Margin = System::Windows::Forms::Padding(4);
 			this->AndButton->Name = L"AndButton";
-			this->AndButton->Size = System::Drawing::Size(150, 100);
+			this->AndButton->Size = System::Drawing::Size(110, 80);
 			this->AndButton->TabIndex = 25;
 			this->AndButton->Text = L"AND";
 			this->AndButton->UseVisualStyleBackColor = true;
@@ -461,64 +468,64 @@ namespace WinForm
 			// 
 			// RotateLeft
 			// 
-			this->RotateLeft->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->RotateLeft->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->RotateLeft->Location = System::Drawing::Point(1012, 615);
+			this->RotateLeft->Location = System::Drawing::Point(249, 296);
 			this->RotateLeft->Margin = System::Windows::Forms::Padding(4);
 			this->RotateLeft->Name = L"RotateLeft";
-			this->RotateLeft->Size = System::Drawing::Size(150, 100);
+			this->RotateLeft->Size = System::Drawing::Size(110, 80);
 			this->RotateLeft->TabIndex = 26;
-			this->RotateLeft->Text = L"ROL";
+			this->RotateLeft->Text = L"⟲";
 			this->RotateLeft->UseVisualStyleBackColor = true;
 			this->RotateLeft->Click += gcnew System::EventHandler(this, &TestForm::RotateLeft_Click);
 			// 
 			// RotateRight
 			// 
-			this->RotateRight->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->RotateRight->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->RotateRight->Location = System::Drawing::Point(1170, 615);
+			this->RotateRight->Location = System::Drawing::Point(249, 384);
 			this->RotateRight->Margin = System::Windows::Forms::Padding(4);
 			this->RotateRight->Name = L"RotateRight";
-			this->RotateRight->Size = System::Drawing::Size(150, 100);
+			this->RotateRight->Size = System::Drawing::Size(110, 80);
 			this->RotateRight->TabIndex = 27;
-			this->RotateRight->Text = L"ROR";
+			this->RotateRight->Text = L"⟳";
 			this->RotateRight->UseVisualStyleBackColor = true;
 			this->RotateRight->Click += gcnew System::EventHandler(this, &TestForm::RotateRight_Click);
 			// 
 			// LeftShift
 			// 
-			this->LeftShift->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->LeftShift->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->LeftShift->Location = System::Drawing::Point(1012, 507);
+			this->LeftShift->Location = System::Drawing::Point(367, 296);
 			this->LeftShift->Margin = System::Windows::Forms::Padding(4);
 			this->LeftShift->Name = L"LeftShift";
-			this->LeftShift->Size = System::Drawing::Size(150, 100);
+			this->LeftShift->Size = System::Drawing::Size(110, 80);
 			this->LeftShift->TabIndex = 28;
-			this->LeftShift->Text = L"LSH";
+			this->LeftShift->Text = L"←";
 			this->LeftShift->UseVisualStyleBackColor = true;
 			this->LeftShift->Click += gcnew System::EventHandler(this, &TestForm::LeftShift_Click);
 			// 
 			// RightShift
 			// 
-			this->RightShift->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->RightShift->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->RightShift->Location = System::Drawing::Point(1170, 507);
+			this->RightShift->Location = System::Drawing::Point(367, 384);
 			this->RightShift->Margin = System::Windows::Forms::Padding(4);
 			this->RightShift->Name = L"RightShift";
-			this->RightShift->Size = System::Drawing::Size(150, 100);
+			this->RightShift->Size = System::Drawing::Size(110, 80);
 			this->RightShift->TabIndex = 29;
-			this->RightShift->Text = L"RSH";
+			this->RightShift->Text = L"→";
 			this->RightShift->UseVisualStyleBackColor = true;
 			this->RightShift->Click += gcnew System::EventHandler(this, &TestForm::RightShift_Click);
 			// 
 			// Button0
 			// 
-			this->Button0->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Button0->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Button0->Location = System::Drawing::Point(13, 831);
+			this->Button0->Location = System::Drawing::Point(13, 736);
 			this->Button0->Margin = System::Windows::Forms::Padding(4);
 			this->Button0->Name = L"Button0";
-			this->Button0->Size = System::Drawing::Size(150, 100);
+			this->Button0->Size = System::Drawing::Size(110, 80);
 			this->Button0->TabIndex = 31;
 			this->Button0->Text = L"0";
 			this->Button0->UseVisualStyleBackColor = true;
@@ -526,12 +533,12 @@ namespace WinForm
 			// 
 			// ClearButton
 			// 
-			this->ClearButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->ClearButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->ClearButton->Location = System::Drawing::Point(487, 399);
+			this->ClearButton->Location = System::Drawing::Point(623, 296);
 			this->ClearButton->Margin = System::Windows::Forms::Padding(4);
 			this->ClearButton->Name = L"ClearButton";
-			this->ClearButton->Size = System::Drawing::Size(150, 100);
+			this->ClearButton->Size = System::Drawing::Size(110, 80);
 			this->ClearButton->TabIndex = 32;
 			this->ClearButton->Text = L"AC";
 			this->ClearButton->UseVisualStyleBackColor = true;
@@ -539,95 +546,114 @@ namespace WinForm
 			// 
 			// RadixBox
 			// 
-			this->RadixBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->RadixBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->RadixBox->FormattingEnabled = true;
 			this->RadixBox->Items->AddRange(gcnew cli::array< System::Object^  >(3) { L"BIN", L"DEC", L"HEX" });
-			this->RadixBox->Location = System::Drawing::Point(1012, 279);
+			this->RadixBox->Location = System::Drawing::Point(506, 225);
 			this->RadixBox->Margin = System::Windows::Forms::Padding(6);
 			this->RadixBox->Name = L"RadixBox";
-			this->RadixBox->Size = System::Drawing::Size(308, 38);
+			this->RadixBox->Size = System::Drawing::Size(228, 37);
 			this->RadixBox->TabIndex = 33;
 			this->RadixBox->SelectedIndexChanged += gcnew System::EventHandler(this, &TestForm::RadixBox_SelectedIndexChanged);
 			// 
 			// ButtonA
 			// 
-			this->ButtonA->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->ButtonA->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->ButtonA->Location = System::Drawing::Point(13, 723);
+			this->ButtonA->Location = System::Drawing::Point(131, 736);
 			this->ButtonA->Margin = System::Windows::Forms::Padding(4);
 			this->ButtonA->Name = L"ButtonA";
-			this->ButtonA->Size = System::Drawing::Size(150, 100);
+			this->ButtonA->Size = System::Drawing::Size(110, 80);
 			this->ButtonA->TabIndex = 34;
 			this->ButtonA->Text = L"A";
 			this->ButtonA->UseVisualStyleBackColor = true;
+			this->ButtonA->Click += gcnew System::EventHandler(this, &TestForm::ButtonA_Click);
 			// 
 			// ButtonB
 			// 
-			this->ButtonB->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->ButtonB->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->ButtonB->Location = System::Drawing::Point(13, 615);
+			this->ButtonB->Location = System::Drawing::Point(249, 736);
 			this->ButtonB->Margin = System::Windows::Forms::Padding(4);
 			this->ButtonB->Name = L"ButtonB";
-			this->ButtonB->Size = System::Drawing::Size(150, 100);
+			this->ButtonB->Size = System::Drawing::Size(110, 80);
 			this->ButtonB->TabIndex = 35;
 			this->ButtonB->Text = L"B";
 			this->ButtonB->UseVisualStyleBackColor = true;
+			this->ButtonB->Click += gcnew System::EventHandler(this, &TestForm::ButtonB_Click);
 			// 
 			// ButtonC
 			// 
-			this->ButtonC->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->ButtonC->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->ButtonC->Location = System::Drawing::Point(13, 507);
+			this->ButtonC->Location = System::Drawing::Point(367, 736);
 			this->ButtonC->Margin = System::Windows::Forms::Padding(4);
 			this->ButtonC->Name = L"ButtonC";
-			this->ButtonC->Size = System::Drawing::Size(150, 100);
+			this->ButtonC->Size = System::Drawing::Size(110, 80);
 			this->ButtonC->TabIndex = 36;
 			this->ButtonC->Text = L"C";
 			this->ButtonC->UseVisualStyleBackColor = true;
+			this->ButtonC->Click += gcnew System::EventHandler(this, &TestForm::ButtonC_Click);
 			// 
 			// ButtonD
 			// 
-			this->ButtonD->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->ButtonD->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->ButtonD->Location = System::Drawing::Point(171, 507);
+			this->ButtonD->Location = System::Drawing::Point(367, 648);
 			this->ButtonD->Margin = System::Windows::Forms::Padding(4);
 			this->ButtonD->Name = L"ButtonD";
-			this->ButtonD->Size = System::Drawing::Size(150, 100);
+			this->ButtonD->Size = System::Drawing::Size(110, 80);
 			this->ButtonD->TabIndex = 37;
 			this->ButtonD->Text = L"D";
 			this->ButtonD->UseVisualStyleBackColor = true;
+			this->ButtonD->Click += gcnew System::EventHandler(this, &TestForm::ButtonD_Click);
 			// 
 			// ButtonE
 			// 
-			this->ButtonE->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->ButtonE->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->ButtonE->Location = System::Drawing::Point(329, 507);
+			this->ButtonE->Location = System::Drawing::Point(367, 560);
 			this->ButtonE->Margin = System::Windows::Forms::Padding(4);
 			this->ButtonE->Name = L"ButtonE";
-			this->ButtonE->Size = System::Drawing::Size(150, 100);
+			this->ButtonE->Size = System::Drawing::Size(110, 80);
 			this->ButtonE->TabIndex = 38;
 			this->ButtonE->Text = L"E";
 			this->ButtonE->UseVisualStyleBackColor = true;
+			this->ButtonE->Click += gcnew System::EventHandler(this, &TestForm::ButtonE_Click);
 			// 
 			// ButtonF
 			// 
-			this->ButtonF->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->ButtonF->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->ButtonF->Location = System::Drawing::Point(487, 507);
+			this->ButtonF->Location = System::Drawing::Point(367, 472);
 			this->ButtonF->Margin = System::Windows::Forms::Padding(4);
 			this->ButtonF->Name = L"ButtonF";
-			this->ButtonF->Size = System::Drawing::Size(150, 100);
+			this->ButtonF->Size = System::Drawing::Size(110, 80);
 			this->ButtonF->TabIndex = 39;
 			this->ButtonF->Text = L"F";
 			this->ButtonF->UseVisualStyleBackColor = true;
+			this->ButtonF->Click += gcnew System::EventHandler(this, &TestForm::ButtonF_Click);
+			// 
+			// FloatingPoint
+			// 
+			this->FloatingPoint->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.125F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->FloatingPoint->Location = System::Drawing::Point(505, 736);
+			this->FloatingPoint->Margin = System::Windows::Forms::Padding(4);
+			this->FloatingPoint->Name = L"FloatingPoint";
+			this->FloatingPoint->Size = System::Drawing::Size(110, 80);
+			this->FloatingPoint->TabIndex = 40;
+			this->FloatingPoint->Text = L".";
+			this->FloatingPoint->UseVisualStyleBackColor = true;
 			// 
 			// TestForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(12, 25);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnablePreventFocusChange;
-			this->ClientSize = System::Drawing::Size(1334, 944);
+			this->ClientSize = System::Drawing::Size(749, 829);
+			this->Controls->Add(this->FloatingPoint);
 			this->Controls->Add(this->ButtonF);
 			this->Controls->Add(this->ButtonE);
 			this->Controls->Add(this->ButtonD);
@@ -677,9 +703,9 @@ namespace WinForm
 		}
 
 #pragma endregion
-	private: 
+	private:
 
-		System::Void TestForm_Load(System::Object^ sender, System::EventArgs^ e) 
+		System::Void TestForm_Load(System::Object^ sender, System::EventArgs^ e)
 		{
 		}
 
@@ -705,21 +731,84 @@ namespace WinForm
 			return gcnew String(Q.GetQInt(b).c_str());
 		}
 
-		System::Void RadixBox_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) 
+		void ButtonControl()
+		{
+			ButtonA->Enabled = false;
+			ButtonB->Enabled = false;
+			ButtonC->Enabled = false;
+			ButtonD->Enabled = false;
+			ButtonE->Enabled = false;
+			ButtonF->Enabled = false;
+			Button0->Enabled = false;
+			Button1->Enabled = false;
+			Button2->Enabled = false;
+			Button3->Enabled = false;
+			Button4->Enabled = false;
+			Button5->Enabled = false;
+			Button6->Enabled = false;
+			Button7->Enabled = false;
+			Button8->Enabled = false;
+			Button9->Enabled = false;
+
+			if (Base == "2")
+			{
+				Button0->Enabled = true;
+				Button1->Enabled = true;
+			}
+
+			if (Base == "10")
+			{
+				Button0->Enabled = true;
+				Button1->Enabled = true;
+				Button2->Enabled = true;
+				Button3->Enabled = true;
+				Button4->Enabled = true;
+				Button5->Enabled = true;
+				Button6->Enabled = true;
+				Button7->Enabled = true;
+				Button8->Enabled = true;
+				Button9->Enabled = true;
+			}
+
+			if (Base == "16")
+			{
+				ButtonA->Enabled = true;
+				ButtonB->Enabled = true;
+				ButtonC->Enabled = true;
+				ButtonD->Enabled = true;
+				ButtonE->Enabled = true;
+				ButtonF->Enabled = true;
+				Button0->Enabled = true;
+				Button1->Enabled = true;
+				Button2->Enabled = true;
+				Button3->Enabled = true;
+				Button4->Enabled = true;
+				Button5->Enabled = true;
+				Button6->Enabled = true;
+				Button7->Enabled = true;
+				Button8->Enabled = true;
+				Button9->Enabled = true;
+			}
+		}
+
+		System::Void RadixBox_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e)
 		{
 			QInt A, B, C;
 
 			if (Param1->Text != "") A = RadixConverter(Param1->Text);
 			if (Param2->Text != "") B = RadixConverter(Param2->Text);
 			if (Answer->Text != "") C = RadixConverter(Answer->Text);
-			
+
 			if (RadixBox->Text == "BIN") Base = "2";
 			if (RadixBox->Text == "DEC") Base = "10";
 			if (RadixBox->Text == "HEX") Base = "16";
+			ButtonControl();
 
 			if (Param1->Text != "") Param1->Text = GetQIntSystemString(A);
 			if (Param2->Text != "") Param2->Text = GetQIntSystemString(B);
 			if (Answer->Text != "") Answer->Text = GetQIntSystemString(C);
+
+
 		}
 
 		System::Void Param1_KeyPressed(System::Object^ sender, System::Windows::Forms::KeyPressEventArgs^ e)
@@ -736,7 +825,7 @@ namespace WinForm
 				e->Handled = true;
 			}
 
-			if (Base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F' ) && !Char::IsControl(e->KeyChar))
+			if (Base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F') && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
 			}
@@ -762,34 +851,110 @@ namespace WinForm
 			}
 		}
 
-		System::Void Param1_TextChanged(System::Object^ sender, System::EventArgs^ e) 
+		System::Void Param1_Clicked(System::Object^ sender, System::EventArgs^ e)
+		{
+			isFocusedBox1 = true;
+			isFocusedBox2 = false;
+		}
+
+		System::Void Param2_Clicked(System::Object^ sender, System::EventArgs^ e)
+		{
+			isFocusedBox1 = false;
+			isFocusedBox2 = true;
+		}
+
+		System::Void Param1_TextChanged(System::Object^ sender, System::EventArgs^ e)
 		{
 		}
 
-		System::Void Param2_TextChanged(System::Object^ sender, System::EventArgs^ e) 
+		System::Void Param2_TextChanged(System::Object^ sender, System::EventArgs^ e)
 		{
 		}
 
-		System::Void Answer_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+		System::Void Answer_TextChanged(System::Object^ sender, System::EventArgs^ e)
+		{
 		}
 
-		System::Void Button0_Click(System::Object^ sender, System::EventArgs^ e) {
+		void AppendTextbox(char c)
+		{
+			if (isFocusedBox1)
+			{
+				marshal_context context;
+				std::string x = context.marshal_as<std::string>(Param1->Text) + c;
+				Param1->Text = gcnew String(x.c_str());
+			}
+
+			if (isFocusedBox2)
+			{
+				marshal_context context;
+				std::string x = context.marshal_as<std::string>(Param2->Text) + c;
+				Param2->Text = gcnew String(x.c_str());
+			}
 		}
-		System::Void Button1_Click(System::Object^ sender, System::EventArgs^ e) {
+
+		System::Void Button0_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('0');
 		}
-		System::Void Button2_Click(System::Object^ sender, System::EventArgs^ e) {
+		System::Void Button1_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('1');
 		}
-		System::Void Button3_Click(System::Object^ sender, System::EventArgs^ e) {
+		System::Void Button2_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('2');
 		}
-		System::Void Button4_Click(System::Object^ sender, System::EventArgs^ e) {
+		System::Void Button3_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('3');
 		}
-		System::Void Button6_Click(System::Object^ sender, System::EventArgs^ e) {
+		System::Void Button4_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('4');
 		}
-		System::Void Button7_Click(System::Object^ sender, System::EventArgs^ e) {
+		System::Void Button5_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('5');
 		}
-		System::Void Button8_Click(System::Object^ sender, System::EventArgs^ e) {
+		System::Void Button6_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('6');
 		}
-		System::Void Button9_Click(System::Object^ sender, System::EventArgs^ e) {
+		System::Void Button7_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('7');
+		}
+		System::Void Button8_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('8');
+		}
+		System::Void Button9_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('9');
+		}
+		System::Void ButtonA_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			AppendTextbox('A');
+		}
+		System::Void ButtonB_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			AppendTextbox('B');
+		}
+		System::Void ButtonC_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('C');
+		}
+		System::Void ButtonD_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('D');
+		}
+		System::Void ButtonE_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('E');
+		}
+		System::Void ButtonF_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			AppendTextbox('F');
 		}
 
 		System::Void ClearButton_Click(System::Object^ sender, System::EventArgs^ e)
@@ -832,72 +997,72 @@ namespace WinForm
 			if (ops == "^") return Answer->Text = GetQIntSystemString(A ^ B);
 
 		}
-	
-		System::Void AddButton_Click(System::Object^ sender, System::EventArgs^ e) 
+
+		System::Void AddButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess("+");
 		}
 
-		System::Void SubtractButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void SubtractButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess("-");
 		}
-		
-		System::Void MultiplyButton_Click(System::Object^ sender, System::EventArgs^ e) 
+
+		System::Void MultiplyButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess("*");
 		}
 
-		System::Void DivideButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void DivideButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess("/");
 		}
 
-		System::Void ModButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void ModButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess("%");
 		}
 
-		
-		System::Void GreaterThanButton_Click(System::Object^ sender, System::EventArgs^ e) 
+
+		System::Void GreaterThanButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess(">");
 		}
 
-		System::Void LessThanButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void LessThanButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess("<");
 		}
 
-		System::Void GreaterEqualToButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void GreaterEqualToButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess(">=");
 		}
 
-		System::Void LessEqualToButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void LessEqualToButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess("<=");
 		}
 
 
 
-		System::Void AndButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void AndButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess("&");
 		}
 
-		System::Void OrButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void OrButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess("|");
 
 		}
 
-		System::Void XorButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void XorButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			logicalProcess("^");
 		}
 
-		System::Void NotButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void NotButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			if (Param1->Text == "") return;
 
@@ -906,57 +1071,95 @@ namespace WinForm
 			Answer->Text = GetQIntSystemString(~A);
 		}
 
+		bool isNumber(std::string s)
+		{
+			for (int i = 0; i < s.length(); i++)
+				if (isdigit(s[i]) == false) return false;
+
+			return true;
+		}
+
 		int IntConverter(String^ input)
 		{
 			marshal_context context;
 			std::string x = context.marshal_as<std::string>(input);
 			std::stringstream ss(x);
 
-			int k; ss >> k; 
-			
-			return k > 0 ? k : 0;
+			if (!isNumber(x)) return -1;
+
+			int k; ss >> k;
+
+			return k < 0 ? -1 : k;
 		}
 
-		System::Void LeftShift_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void LeftShift_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
 			QInt A; A = RadixConverter(Param1->Text);
 
 			int B; B = IntConverter(Param2->Text);
+
+			if (B < 0)
+			{
+				Param2->Text = "";
+				Answer->Text = "";
+				return;
+			}
 
 			Answer->Text = GetQIntSystemString(A << B);
 		}
 
-		System::Void RightShift_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void RightShift_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
 			QInt A; A = RadixConverter(Param1->Text);
 
 			int B; B = IntConverter(Param2->Text);
+
+			if (B < 0)
+			{
+				Param2->Text = "";
+				Answer->Text = "";
+				return;
+			}
 
 			Answer->Text = GetQIntSystemString(A >> B);
 		}
 
-		System::Void RotateLeft_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void RotateLeft_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
 			QInt A; A = RadixConverter(Param1->Text);
 
 			int B; B = IntConverter(Param2->Text);
+
+			if (B < 0)
+			{
+				Param2->Text = "";
+				Answer->Text = "";
+				return;
+			}
 
 			Answer->Text = GetQIntSystemString(A.rol(B));
 		}
 
-		System::Void RotateRight_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void RotateRight_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
 
 			QInt A; A = RadixConverter(Param1->Text);
 
 			int B; B = IntConverter(Param2->Text);
+
+			if (B < 0)
+			{
+				Param2->Text = "";
+				Answer->Text = "";
+				return;
+			}
 
 			Answer->Text = GetQIntSystemString(A.ror(B));
 		}
@@ -964,5 +1167,7 @@ namespace WinForm
 		System::Void EqualButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 		}
-};
+
+
+	};
 }
