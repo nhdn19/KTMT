@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "QInt.h"
+#include <sstream>
 #include <msclr\marshal_cppstd.h>
 
 using namespace System::IO;
@@ -135,7 +136,7 @@ namespace WinForm
 			this->Param1->TabIndex = 0;
 			this->Param1->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			this->Param1->TextChanged += gcnew System::EventHandler(this, &TestForm::Param1_TextChanged);
-			this->Param1->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TestForm::Param_KeyPressed);
+			this->Param1->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TestForm::Param1_KeyPressed);
 			// 
 			// Param2
 			// 
@@ -148,7 +149,7 @@ namespace WinForm
 			this->Param2->TabIndex = 1;
 			this->Param2->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			this->Param2->TextChanged += gcnew System::EventHandler(this, &TestForm::Param2_TextChanged);
-			this->Param2->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TestForm::Param_KeyPressed);
+			this->Param2->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TestForm::Param2_KeyPressed);
 			// 
 			// Button1
 			// 
@@ -420,6 +421,7 @@ namespace WinForm
 			this->NotButton->TabIndex = 22;
 			this->NotButton->Text = L"NOT";
 			this->NotButton->UseVisualStyleBackColor = true;
+			this->NotButton->Click += gcnew System::EventHandler(this, &TestForm::NotButton_Click);
 			// 
 			// XorButton
 			// 
@@ -432,6 +434,7 @@ namespace WinForm
 			this->XorButton->TabIndex = 23;
 			this->XorButton->Text = L"XOR";
 			this->XorButton->UseVisualStyleBackColor = true;
+			this->XorButton->Click += gcnew System::EventHandler(this, &TestForm::XorButton_Click);
 			// 
 			// OrButton
 			// 
@@ -444,6 +447,7 @@ namespace WinForm
 			this->OrButton->TabIndex = 24;
 			this->OrButton->Text = L"OR";
 			this->OrButton->UseVisualStyleBackColor = true;
+			this->OrButton->Click += gcnew System::EventHandler(this, &TestForm::OrButton_Click);
 			// 
 			// AndButton
 			// 
@@ -456,6 +460,7 @@ namespace WinForm
 			this->AndButton->TabIndex = 25;
 			this->AndButton->Text = L"AND";
 			this->AndButton->UseVisualStyleBackColor = true;
+			this->AndButton->Click += gcnew System::EventHandler(this, &TestForm::AndButton_Click);
 			// 
 			// RotateLeft
 			// 
@@ -466,7 +471,7 @@ namespace WinForm
 			this->RotateLeft->Name = L"RotateLeft";
 			this->RotateLeft->Size = System::Drawing::Size(150, 100);
 			this->RotateLeft->TabIndex = 26;
-			this->RotateLeft->Text = L"LRO";
+			this->RotateLeft->Text = L"ROL";
 			this->RotateLeft->UseVisualStyleBackColor = true;
 			// 
 			// RotateRight
@@ -478,7 +483,7 @@ namespace WinForm
 			this->RotateRight->Name = L"RotateRight";
 			this->RotateRight->Size = System::Drawing::Size(150, 100);
 			this->RotateRight->TabIndex = 27;
-			this->RotateRight->Text = L"RRO";
+			this->RotateRight->Text = L"ROR";
 			this->RotateRight->UseVisualStyleBackColor = true;
 			// 
 			// LeftShift
@@ -492,6 +497,7 @@ namespace WinForm
 			this->LeftShift->TabIndex = 28;
 			this->LeftShift->Text = L"LSH";
 			this->LeftShift->UseVisualStyleBackColor = true;
+			this->LeftShift->Click += gcnew System::EventHandler(this, &TestForm::LeftShift_Click);
 			// 
 			// RightShift
 			// 
@@ -504,6 +510,7 @@ namespace WinForm
 			this->RightShift->TabIndex = 29;
 			this->RightShift->Text = L"RSH";
 			this->RightShift->UseVisualStyleBackColor = true;
+			this->RightShift->Click += gcnew System::EventHandler(this, &TestForm::RightShift_Click);
 			// 
 			// Button0
 			// 
@@ -692,21 +699,47 @@ namespace WinForm
 			if (RadixBox->Text == "BIN") base = "2";
 			if (RadixBox->Text == "DEC") base = "10";
 			if (RadixBox->Text == "HEX") base = "16";
+
+			Param1->Text = "";
+			Param2->Text = "";
+			Answer->Text = "";
 		}
 
-		System::Void Param_KeyPressed(System::Object^ sender, System::Windows::Forms::KeyPressEventArgs^ e)
+		System::Void Param1_KeyPressed(System::Object^ sender, System::Windows::Forms::KeyPressEventArgs^ e)
 		{
+			if (base == "10" && e->KeyChar == '-' && Param1->Text == "") return;
+
 			if (base == "2" && e->KeyChar != 48 && e->KeyChar != 49 && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
 			}
 
-			if (base == "10" && !Char::IsDigit(e->KeyChar) && !Char::IsControl(e->KeyChar) && e->KeyChar != '-')
+			if (base == "10" && !Char::IsDigit(e->KeyChar) && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
 			}
 
 			if (base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F' ) && !Char::IsControl(e->KeyChar))
+			{
+				e->Handled = true;
+			}
+		}
+
+		System::Void Param2_KeyPressed(System::Object^ sender, System::Windows::Forms::KeyPressEventArgs^ e)
+		{
+			if (base == "10" && e->KeyChar == '-' && Param2->Text == "") return;
+
+			if (base == "2" && e->KeyChar != 48 && e->KeyChar != 49 && !Char::IsControl(e->KeyChar))
+			{
+				e->Handled = true;
+			}
+
+			if (base == "10" && !Char::IsDigit(e->KeyChar) && !Char::IsControl(e->KeyChar))
+			{
+				e->Handled = true;
+			}
+
+			if (base == "16" && !Char::IsDigit(e->KeyChar) && (e->KeyChar < 'A' || e->KeyChar > 'F') && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
 			}
@@ -752,134 +785,167 @@ namespace WinForm
 			Param2->Text = "";
 			Answer->Text = "";
 		}
+
+		void logicalProcess(std::string ops)
+		{
+			if (Param1->Text == "" || Param2->Text == "") return;
+
+			marshal_context context;
+			std::string x = context.marshal_as<std::string>(Param1->Text);
+			std::string y = context.marshal_as<std::string>(Param2->Text);
+			std::string b = context.marshal_as<std::string>(base);
+
+			QInt A, B;
+			A.ScanQInt(x, b);
+			B.ScanQInt(y, b);
+
+			if (ops == "+") return Answer->Text = gcnew String((A + B).GetQInt(b).c_str());
+
+			if (ops == "-") return Answer->Text = gcnew String((A - B).GetQInt(b).c_str());
+
+			if (ops == "*") return Answer->Text = gcnew String((A * B).GetQInt(b).c_str());
+
+			if (ops == "/") return Answer->Text = gcnew String((A / B).GetQInt(b).c_str());
+
+			if (ops == "%") return Answer->Text = gcnew String((A % B).GetQInt(b).c_str());
+
+			if (ops == ">") return Answer->Text = (A > B) ? "True" : "False";
+
+			if (ops == "<") return Answer->Text = (A < B) ? "True" : "False";
+
+			if (ops == ">=") return Answer->Text = (A >= B) ? "True" : "False";
+
+			if (ops == "<=") return Answer->Text = (A <= B) ? "True" : "False";
+
+			if (ops == "&") return Answer->Text = gcnew String((A & B).GetQInt(b).c_str());
+
+			if (ops == "|") return Answer->Text = gcnew String((A | B).GetQInt(b).c_str());
+
+			if (ops == "^") return Answer->Text = gcnew String((A ^ B).GetQInt(b).c_str());
+
+		}
 	
 		System::Void AddButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			lockedOperator = '+';
+			logicalProcess("+");
 		}
 
 		System::Void SubtractButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			lockedOperator = '-';
+			logicalProcess("-");
 		}
 		
 		System::Void MultiplyButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			lockedOperator = '*';
+			logicalProcess("*");
 		}
 
 		System::Void DivideButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			lockedOperator = '/';
+			logicalProcess("/");
 		}
 
 		System::Void ModButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			lockedOperator = '%';
+			logicalProcess("%");
 		}
 
+		
 		System::Void GreaterThanButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			if (Param1->Text == "" || Param2->Text == "") return;
-
-			marshal_context context;
-			std::string x = context.marshal_as<std::string>(Param1->Text);
-			std::string y = context.marshal_as<std::string>(Param2->Text);
-			std::string b = context.marshal_as<std::string>(base);
-
-			QInt A, B;
-			A.ScanQInt(x, b);
-			B.ScanQInt(y, b);
-
-			Answer->Text = (A > B) ? "True" : "False";
+			logicalProcess(">");
 		}
 
 		System::Void LessThanButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			if (Param1->Text == "" || Param2->Text == "") return;
-
-			marshal_context context;
-			std::string x = context.marshal_as<std::string>(Param1->Text);
-			std::string y = context.marshal_as<std::string>(Param2->Text);
-			std::string b = context.marshal_as<std::string>(base);
-
-			QInt A, B;
-			A.ScanQInt(x, b);
-			B.ScanQInt(y, b);
-
-			Answer->Text = (A < B) ? "True" : "False";
+			logicalProcess("<");
 		}
 
 		System::Void GreaterEqualToButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			if (Param1->Text == "" || Param2->Text == "") return;
-
-			marshal_context context;
-			std::string x = context.marshal_as<std::string>(Param1->Text);
-			std::string y = context.marshal_as<std::string>(Param2->Text);
-			std::string b = context.marshal_as<std::string>(base);
-
-			QInt A, B;
-			A.ScanQInt(x, b);
-			B.ScanQInt(y, b);
-
-			Answer->Text = (A >= B) ? "True" : "False";
+			logicalProcess(">=");
 		}
 
 		System::Void LessEqualToButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			if (Param1->Text == "" || Param2->Text == "") return;
+			logicalProcess("<=");
+		}
+
+
+
+		System::Void AndButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			logicalProcess("&");
+		}
+
+		System::Void OrButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			logicalProcess("|");
+
+		}
+
+		System::Void XorButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			logicalProcess("^");
+		}
+
+		System::Void NotButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			if (Param1->Text == "") return;
 
 			marshal_context context;
 			std::string x = context.marshal_as<std::string>(Param1->Text);
-			std::string y = context.marshal_as<std::string>(Param2->Text);
 			std::string b = context.marshal_as<std::string>(base);
 
 			QInt A, B;
 			A.ScanQInt(x, b);
-			B.ScanQInt(y, b);
 
-			Answer->Text = (A <= B) ? "True" : "False";
+			Answer->Text = gcnew String((~A).GetQInt(b).c_str());
 		}
-		
-		System::Void EqualButton_Click(System::Object^ sender, System::EventArgs^ e) 
+
+		System::Void LeftShift_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
-			if (lockedOperator == ' ') return;
 
 			marshal_context context;
 			std::string x = context.marshal_as<std::string>(Param1->Text);
 			std::string y = context.marshal_as<std::string>(Param2->Text);
 			std::string b = context.marshal_as<std::string>(base);
 
-			QInt A, B, C;
+			std::stringstream ss(y);
+
+			QInt A;
 			A.ScanQInt(x, b);
-			B.ScanQInt(y, b);
 
-			switch (lockedOperator)
-			{
-			case '+':
-				C = A + B;
-				break;
-			case '-':
-				C = A - B;
-				break;
-			case '*':
-				C = A * B;
-				break;
-			case '/':
-				C = A / B;
-				break;
-			case '%':
-				C = A % B;
-				break;
-			default:
-				break;
-			}
+			int B; ss >> B;
 
-			Answer->Text = gcnew String(C.GetQInt(b).c_str());
+			Answer->Text = gcnew String((A << B).GetQInt(b).c_str());
+		}
 
-			lockedOperator = ' ';
+		System::Void RightShift_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+
+			if (Param1->Text == "" || Param2->Text == "") return;
+
+			marshal_context context;
+			std::string x = context.marshal_as<std::string>(Param1->Text);
+			std::string y = context.marshal_as<std::string>(Param2->Text);
+			std::string b = context.marshal_as<std::string>(base);
+
+			std::stringstream ss(y);
+
+			QInt A;
+			A.ScanQInt(x, b);
+
+			int B; ss >> B;
+
+			Answer->Text = gcnew String((A >> B).GetQInt(b).c_str());
+		}
+
+		System::Void EqualButton_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+
+
 		}
 };
 }
