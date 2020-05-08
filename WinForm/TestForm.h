@@ -650,6 +650,7 @@ namespace WinForm
 			this->FloatingPoint->TabIndex = 40;
 			this->FloatingPoint->Text = L".";
 			this->FloatingPoint->UseVisualStyleBackColor = true;
+			this->FloatingPoint->Click += gcnew System::EventHandler(this, &TestForm::FloatingPoint_Click);
 			// 
 			// DataType
 			// 
@@ -862,8 +863,33 @@ namespace WinForm
 			LessThanButton->Enabled = isEnable;
 		}
 
+		void RadioBox_Qfloat()
+		{
+			Qfloat A, B, C;
+
+			if (Base == "2")
+			{
+				if (Param1->Text->Length != 128) Param1->Text = "";
+				if (Param2->Text->Length != 128) Param2->Text = "";
+			}
+
+			if (Param1->Text != "") A = RadixQfloatConverter(Param1->Text);
+			if (Param2->Text != "") B = RadixQfloatConverter(Param2->Text);
+			if (Answer->Text != "") C = RadixQfloatConverter(Answer->Text);
+
+			if (RadixBox->Text == "BIN") Base = "2";
+			if (RadixBox->Text == "DEC") Base = "10";
+			ButtonControl();
+
+			if (Param1->Text != "") Param1->Text = GetQfloatSystemString(A);
+			if (Param2->Text != "") Param2->Text = GetQfloatSystemString(B);
+			if (Answer->Text != "") Answer->Text = GetQfloatSystemString(C);
+		}
+
 		System::Void RadixBox_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e)
 		{
+			if (DataType->Text == "QFloat") return RadioBox_Qfloat();
+			
 			QInt A, B, C;
 
 			if (Param1->Text != "") A = RadixQIntConverter(Param1->Text);
@@ -880,8 +906,53 @@ namespace WinForm
 			if (Answer->Text != "") Answer->Text = GetQIntSystemString(C);
 		}
 
+		char lastChar()
+		{
+			if (isFocusedBox1)
+			{
+				if (Param1->Text == "") return ' ';
+				int size = Param1->Text->Length;
+				return Param1->Text[size - 1];
+			}
+
+			if (isFocusedBox2)
+			{
+				if (Param2->Text == "") return ' ';
+				int size = Param2->Text->Length;
+				return Param2->Text[size - 1];
+			}
+
+			return ' ';
+		}
+
+		bool hasNoFloating()
+		{
+			if (isFocusedBox1)
+			{
+				for (int i = 0; i < Param1->Text->Length; i++)
+					if (Param1->Text[i] == '.') return false;
+
+				return true;
+			}
+
+			if (isFocusedBox2)
+			{
+				for (int i = 0; i < Param2->Text->Length; i++)
+					if (Param2->Text[i] == '.') return false;
+
+				return true;
+			}
+
+			return false;
+		}
+
 		void Param_KeyPressed(System::Windows::Forms::KeyPressEventArgs^ e)
 		{
+			if (DataType->Text == "QFloat" && RadixBox->Text == "DEC")
+			{
+				if (e->KeyChar == '.' && hasNoFloating() && isdigit(lastChar())) return;
+			}
+
 			if (Base == "2" && e->KeyChar != 48 && e->KeyChar != 49 && !Char::IsControl(e->KeyChar))
 			{
 				e->Handled = true;
@@ -900,7 +971,7 @@ namespace WinForm
 
 		System::Void Param1_KeyPressed(System::Object^ sender, System::Windows::Forms::KeyPressEventArgs^ e)
 		{
-			if (Base == "10" && e->KeyChar == '-' && Param1->Text == "") return;
+			if (Base == "10" && e->KeyChar == '-' && Param1->Text == "") return;			
 
 			Param_KeyPressed(e);
 		}
@@ -912,16 +983,20 @@ namespace WinForm
 			Param_KeyPressed(e);
 		}
 
+		void focusBox(bool box1, bool box2)
+		{
+			isFocusedBox1 = box1;
+			isFocusedBox2 = box2;
+		}
+
 		System::Void Param1_Clicked(System::Object^ sender, System::EventArgs^ e)
 		{
-			isFocusedBox1 = true;
-			isFocusedBox2 = false;
+			focusBox(true, false);
 		}
 
 		System::Void Param2_Clicked(System::Object^ sender, System::EventArgs^ e)
 		{
-			isFocusedBox1 = false;
-			isFocusedBox2 = true;
+			focusBox(false, true);
 		}
 
 		System::Void Param1_TextChanged(System::Object^ sender, System::EventArgs^ e)
@@ -1017,7 +1092,11 @@ namespace WinForm
 		{
 			AppendTextbox('F');
 		}
-
+		System::Void FloatingPoint_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			if (DataType->Text == "QFloat" && RadixBox->Text == "DEC")
+				if (hasNoFloating() && isdigit(lastChar())) AppendTextbox('.');
+		}
 		System::Void ClearButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			Param1->Text = "";
@@ -1028,6 +1107,13 @@ namespace WinForm
 		void logicalQfloat(std::string ops)
 		{
 			Qfloat A, B;
+
+			if (Base == "2")
+			{
+				if (Param1->Text->Length != 128) Param1->Text = "";
+				if (Param2->Text->Length != 128) Param2->Text = "";
+				if (Param1->Text == "" || Param2->Text == "") return;
+			}
 
 			A = RadixQfloatConverter(Param1->Text);
 			B = RadixQfloatConverter(Param2->Text);
@@ -1248,6 +1334,5 @@ namespace WinForm
 		}
 
 
-	
-};
+	};
 }
