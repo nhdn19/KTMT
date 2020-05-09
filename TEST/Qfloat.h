@@ -39,6 +39,7 @@ public:
 
 	string multi2String(string, string);
 	string sum2String(string, string);
+	string roundbyGroup(std::string);
 };
 
 #endif
