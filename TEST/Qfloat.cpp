@@ -516,6 +516,14 @@ Qfloat Qfloat::operator*(Qfloat y) {
 
 }
 
+Qfloat Qfloat::operator-(Qfloat y) {
+	if (y.GetBit(127))
+		y.OffBit(127);
+	else
+		y.SetBit(127);
+	return *this + y;
+}
+
 Qfloat Qfloat::operator/(Qfloat y)
 {
 	//x = 0 -> return 0
@@ -696,19 +704,6 @@ string Qfloat::sum2String(string str, string str1) {
 	}
 	if (du == 1) ans = "1" + ans;
 	return ans;
-}
-
-string Qfloat::substract2String(string str1, string str2)
-{
-	while (str1.length() < str2.length())
-		str1 = '0' + str1;
-	while (str2.length() < str1.length())
-		str2 = '0' + str2;
-	str2 = get2sComplement(str2);
-	string str = sum2String(str1, str2);
-	if (str.length() > str1.length())
-		str = str.substr(1);
-	return str;
 }
 
 string Qfloat::divide2String(string str1, string str2)
