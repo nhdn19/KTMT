@@ -11,6 +11,23 @@ bool isFull0(string str)
 	return true;
 }
 
+string get2sComplement(string str)
+{
+	for (int i = 0; i < str.length(); i++)
+		str[i] = '1' - str[i] + '0';
+	add1ToString(str);
+	return str;
+}
+
+void shiftLeft(string &str1, string &str2)
+{
+	if (str1[0] == '1')
+		str1 = str1 + str2[0];
+	else
+		str1 = str1.substr(1) + str2[0];
+	str2 = str2.substr(1) + '0';
+}
+
 void Qfloat::ZeroBits()
 {
 	data[0] = data[1] = data[2] = data[3] = 0;
@@ -185,7 +202,7 @@ string Qfloat::GetDecString()
 		if (GetBit(i))
 			isSignificandFull0 = false;
 
-	int last1 = -1; //find the last bit 1 of significand
+	int last1 = 128; //find the last bit 1 of significand
 	if (!isSignificandFull0)
 		for (last1 = 0; last1 <= 111; last1++)
 			if (GetBit(last1))
@@ -235,7 +252,7 @@ string Qfloat::GetDecString()
 					wholeBin += char(GetBit(j) + '0');
 				exp--;
 			}
-			if (last1 != -1 && j >= last1)
+			if (j >= last1)
 				for (j; j >= last1; j--)
 					fractionalBin += char(GetBit(j) + '0');
 		}
@@ -318,7 +335,6 @@ void Qfloat::ScanBinString(string s)
 		k = k + 1;
 	}
 }
-
 
 Qfloat Qfloat::operator+(Qfloat y) {
 	//this = x;
@@ -419,14 +435,6 @@ Qfloat Qfloat::operator+(Qfloat y) {
 	return z;
 }
 
-Qfloat Qfloat::operator-(Qfloat y) {
-	if (y.GetBit(127))
-		y.OffBit(127);
-	else
-		y.SetBit(127);
-	return *this + y;
-}
-
 Qfloat Qfloat::operator*(Qfloat y) {
 	if (this->GetDecString() == "0")
 		return *this;
@@ -508,6 +516,14 @@ Qfloat Qfloat::operator*(Qfloat y) {
 
 }
 
+Qfloat Qfloat::operator-(Qfloat y) {
+	if (y.GetBit(127))
+		y.OffBit(127);
+	else
+		y.SetBit(127);
+	return *this + y;
+}
+
 Qfloat Qfloat::operator/(Qfloat y)
 {
 	//x = 0 -> return 0
@@ -531,46 +547,41 @@ Qfloat Qfloat::operator/(Qfloat y)
 	if (isNegative)
 		z.SetBit(127);
 
-	QInt xSig, ySig; //significand of x and y
+	string xSig = "", ySig = ""; //significand of x and y
 	int xExp = this->GetExponentDec(); //exponent of x
 	int yExp = y.GetExponentDec(); //exponent of y
-	for (int i = 0; i <= 111; i++)
+	for (int i = 111; i >= 0; i--)
 	{
-		if (GetBit(i))
-			xSig.SetBit(i);
-		if (y.GetBit(i))
-			ySig.SetBit(i);
+		xSig += char(this->GetBit(i) + '0');
+		ySig += char(y.GetBit(i) + '0');
 	}
 	if (xExp == 0)
 		xExp = 1;
 	else
-		xSig.SetBit(112);
+		xSig = '1' + xSig;
 	if (yExp == 0)
 		yExp = 1;
 	else
-		ySig.SetBit(112);
+		ySig = '1' + ySig;
 
-	while (!xSig.GetBit(126))
+	while (ySig.back() == '0')
 	{
-		xSig = xSig << 1;
-		xExp--;
-	}
-	while (!ySig.GetBit(0))
-	{
-		ySig = ySig >> 1;
+		ySig.pop_back();
 		yExp++;
 	}
-
-	QInt zSig = xSig / ySig; 
-	int zExp = xExp - yExp;
-	string zSigBin = "";
-	bool check = false;
-	for (int i = 126; i >= 0; i--)
+	int lenYSig = ySig.length();
+	int lenXSig = xSig.length();
+	while (lenXSig < lenYSig + 113)
 	{
-		bool bit = zSig.GetBit(i);
-		if (bit) check = true;
-		if (check) zSigBin += char(bit + '0');
+		xSig += '0';
+		lenXSig++;
+		xExp--;
 	}
+
+	string zSigBin = divide2String(xSig, ySig);
+	int zExp = xExp - yExp;
+	while (zSigBin[0] == '0')
+		zSigBin = zSigBin.substr(1);
 	if (zSigBin != "")
 	{
 		int len = zSigBin.length();
@@ -663,6 +674,8 @@ string Qfloat::sum2String(string str, string str1) {
 
 	while (str.size() < str1.size())
 		str = "0" + str;
+	while (str.size() > str1.size())
+		str1 = '0' + str1;
 
 	bool du = 0;
 	for (int i = str.size() - 1; i >= 0; i--) {
@@ -692,6 +705,30 @@ string Qfloat::sum2String(string str, string str1) {
 	if (du == 1) ans = "1" + ans;
 	return ans;
 }
+
+string Qfloat::divide2String(string str1, string str2)
+{
+	string a = "";
+	while (a.length() < str2.length())
+		a += '0';
+	int n = str1.length();
+	string m = get2sComplement('0' + str2);
+	int l = m.length();
+	for (n; n > 0; n--)
+	{
+		shiftLeft(a, str1);
+		string temp = sum2String(a, m);
+		if (temp.length() > l)
+			temp = temp.substr(1);
+		if (temp[0] == '0')
+		{
+			str1[str1.length() - 1] = '1';
+			a = temp.substr(1);
+		}
+	}
+	return str1;
+}
+
 
 string Qfloat::getSign() {
 	if (GetBit(127)) return "1";

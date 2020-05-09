@@ -183,18 +183,13 @@ int main(int argc, char* argv[])
 	//123.135 //323.25
 	////////////TEST
 
-	//Qfloat a, b;
+	Qfloat a, b;
 
-	//a.ScanDecString("37.5");
-	//b.ScanDecString("23.1");
+	a.ScanDecString("34.3423987");
+	b.ScanDecString("8.845374");
 
-	//cout << (a * b).GetDecString() << endl;
+	cout << (a / b).GetDecString() << endl;
 
-	Qfloat a;
-	////37.5 23.1
-	a.ScanDecString("1000.999999999999999999999999999999999999921331231");
-
-	cout << a.GetDecString();
 
 	return 0;
 }
