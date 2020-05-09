@@ -10,6 +10,23 @@ bool isFull0(std::string str)
 	return true;
 }
 
+std::string get2sComplement(std::string str)
+{
+	for (int i = 0; i < str.length(); i++)
+		str[i] = '1' - str[i] + '0';
+	add1ToString(str);
+	return str;
+}
+
+void shiftLeft(std::string& str1, std::string& str2)
+{
+	if (str1[0] == '1')
+		str1 = str1 + str2[0];
+	else
+		str1 = str1.substr(1) + str2[0];
+	str2 = str2.substr(1) + '0';
+}
+
 void QFloat::ZeroBits()
 {
 	data[0] = data[1] = data[2] = data[3] = 0;
@@ -203,7 +220,7 @@ std::string QFloat::GetDecString()
 	for (int i = 111; i >= 0; i--)
 		if (GetBit(i)) isSignificandFull0 = false;
 
-	int last1 = -1; //find the last bit 1 of significand
+	int last1 = 128; //find the last bit 1 of significand
 
 	if (!isSignificandFull0)
 		for (last1 = 0; last1 <= 111; last1++)
@@ -261,7 +278,7 @@ std::string QFloat::GetDecString()
 				exp = exp - 1;
 			}
 
-			if (last1 != -1 && j >= last1)
+			if (j >= last1)
 				for (j; j >= last1; j--)
 					fractionalBin += char(GetBit(j) + '0');
 		}
@@ -581,22 +598,19 @@ QFloat QFloat::operator * (QFloat y)
 	return z;
 }
 
-QFloat QFloat::operator/(QFloat y)
+QFloat QFloat::operator / (QFloat y)
 {
 	//x = 0 -> return 0
-
 	if (this->GetDecString() == "0")
 		return QFloat();
 
 	//y = 0
-
 	if (y.GetDecString() == "0")
 	{
 		//return NaN
 		QFloat temp;
 		for (int i = 126; i >= 111; i--)
 			temp.SetBit(i);
-
 		return temp;
 	}
 
@@ -605,83 +619,63 @@ QFloat QFloat::operator/(QFloat y)
 		isNegative = false;
 
 	QFloat z; //result
-	if (isNegative) z.SetBit(127);
+	if (isNegative)
+		z.SetBit(127);
 
-	QInt xSig, ySig; //significand of x and y
+	std::string xSig = "", ySig = ""; //significand of x and y
 	int xExp = this->GetExponentDec(); //exponent of x
 	int yExp = y.GetExponentDec(); //exponent of y
-
-
-	for (int i = 0; i <= 111; i++)
+	for (int i = 111; i >= 0; i--)
 	{
-		if (GetBit(i)) xSig.SetBit(i);
-
-		if (y.GetBit(i)) ySig.SetBit(i);
+		xSig += char(this->GetBit(i) + '0');
+		ySig += char(y.GetBit(i) + '0');
 	}
-
 	if (xExp == 0)
 		xExp = 1;
 	else
-		xSig.SetBit(112);
-
-
+		xSig = '1' + xSig;
 	if (yExp == 0)
 		yExp = 1;
 	else
-		ySig.SetBit(112);
+		ySig = '1' + ySig;
 
-
-	while (!xSig.GetBit(126))
+	while (ySig.back() == '0')
 	{
-		xSig = xSig << 1;
+		ySig.pop_back();
+		yExp++;
+	}
+	int lenYSig = ySig.length();
+	int lenXSig = xSig.length();
+	while (lenXSig < lenYSig + 113)
+	{
+		xSig += '0';
+		lenXSig++;
 		xExp--;
 	}
 
-	while (!ySig.GetBit(0))
-	{
-		ySig = ySig >> 1;
-		yExp++;
-	}
-
-	QInt zSig = xSig / ySig;
+	std::string zSigBin = divide2String(xSig, ySig);
 	int zExp = xExp - yExp;
-
-	std::string zSigBin = "";
-
-	bool check = false;
-
-	for (int i = 126; i >= 0; i--)
-	{
-		bool bit = zSig.GetBit(i);
-		if (bit) check = true;
-		if (check) zSigBin += char(bit + '0');
-	}
-
-
+	while (zSigBin[0] == '0')
+		zSigBin = zSigBin.substr(1);
 	if (zSigBin != "")
 	{
 		int len = zSigBin.length();
 		zExp = zExp + (len - 1);
-
 		if (zExp > 16383) //overflow
 		{
 			for (int i = 126; i > 111; i--)
 				z.SetBit(i);
-
 			return z; //infinity
 		}
 		else if (zExp < -16494 || (zExp == -16494 && zSigBin != "1")) //underflow
-		{
 			return z; // -> 0
-		}
 		else if (zExp < -16382 || (zExp == -16494 && zSigBin == "1")) //denormalized
 		{
 			int t = -16382 - zExp;
-
 			while (t > 0)
 			{
 				zSigBin = '0' + zSigBin;
-				t = t - 1;
+				t--;
 			}
 			zExp = 0;
 		}
@@ -691,30 +685,26 @@ QFloat QFloat::operator/(QFloat y)
 			zSigBin = zSigBin.substr(1);
 		}
 	}
-	else return QFloat();
-
-
+	else
+		return QFloat();
 	if (zExp > 0)
 	{
 		QInt exp;
 		exp.ScanDecString(std::to_string(zExp));
-
 		for (int i = 0; i < 15; i++)
-			if (exp.GetBit(i)) z.SetBit(i + 112);
+			if (exp.GetBit(i))
+				z.SetBit(i + 112);
 	}
-
 	if (!zSigBin.empty())
 	{
 		int k = 0, i = 111;
-
 		while (k < zSigBin.length() && i >= 0)
 		{
-			if (zSigBin[k] == '1') z.SetBit(i);
-			k = k + 1;
-			i = i - 1;
+			if (zSigBin[k] == '1')
+				z.SetBit(i);
+			k++; i--;
 		}
 	}
-
 	return z;
 }
 
@@ -764,7 +754,11 @@ std::string QFloat::sum2String(std::string str, std::string str1)
 
 	std::string ans;
 
-	while (str.size() < str1.size())  str = "0" + str;
+	while (str.size() < str1.size())
+		str = "0" + str;
+
+	while (str.size() > str1.size())
+		str1 = '0' + str1;
 
 	bool du = 0;
 
@@ -878,68 +872,44 @@ std::string QFloat::GetQFloat(std::string base)
 
 std::string QFloat::roundbyGroup(std::string str) 
 {
-	int cnt9 = 0, index = 0; bool take = 0;
-	int round = 20;
+	str.resize(30);
+	int cnt9 = 0, cnt0 = 0, index = 0, round = 10;
+	bool take = 0;
 	std::string bDot = "";
+	for (int i = 0; i < str.size(); i++) {
+		if (take == 1) {
+			if (str[i] == '9') {
+				if (cnt9 == 0) index = i;
+				cnt9++;
+			}
+			else
+				cnt9 = 0;
+			if (str[i] == '0') {
+				if (cnt0 == 0)index = i;
+				cnt0++;
+			}
+			else cnt0 = 0;
 
-	for (int i = 0; i < str.size(); i++) 
-	{
-		if (str[i] == '9' && take == 1) 
-		{
-			if (cnt9 == 0) index = i;
-			cnt9++;
 		}
 		if (str[i] == '.') take = 1;
 		if (take == 0) bDot = bDot + str[i];
-		if (cnt9 == round) break;
+		if (cnt9 == round || cnt0 == round) break;
 	}
 
-	if (cnt9 == round) 
-	{
-		if (str[index - 1] == '.') 
-		{
+	if (cnt9 == round || cnt0 == round) {
+		if (str[index - 1] == '.') {
 			long long temp = stoi(bDot);
-			temp++;
+			if (str[index] == '9')
+				temp++;
 			return std::to_string(temp);
 		}
-		else 
-		{
-			str[index - 1] = char(str[index - 1] + 1);
+		else {
+			if (str[index] == '9')
+				str[index - 1] = char(str[index - 1] + 1);
 			str.erase(str.begin() + index, str.end());
 			return str;
 		}
 	}
-
-	int cnt0 = 0;
-	index = 0, take = 0;
-	bDot = "";
-
-	for (int i = 0; i < str.size(); i++) 
-	{
-		if (str[i] == '0' && take == 1) 
-		{
-			if (cnt0 == 0) index = i;
-			cnt0++;
-		}
-		if (str[i] == '.') take = 1;
-		if (take == 0) bDot = bDot + str[i];
-		if (cnt0 == round) break;
-	}
-
-	if (cnt0 == round) 
-	{
-		if (str[index - 1] == '.') 
-		{
-			long long temp = stoi(bDot);
-			return std::to_string(temp);
-		}
-		else 
-		{
-			str.erase(str.begin() + index, str.end());
-			return str;
-		}
-	}
-
 	return str;
 }
 
@@ -952,4 +922,33 @@ bool QFloat::operator == (QFloat T)
 	}
 
 	return true;
+}
+
+std::string QFloat::divide2String(std::string str1, std::string str2)
+{
+	std::string a = "";
+
+	while (a.length() < str2.length())
+		a += '0';
+
+	int n = str1.length();
+
+	std::string m = get2sComplement('0' + str2);
+	int l = m.length();
+
+	for (n; n > 0; n--)
+	{
+		shiftLeft(a, str1);
+		std::string temp = sum2String(a, m);
+
+		if (temp.length() > l)
+			temp = temp.substr(1);
+
+		if (temp[0] == '0')
+		{
+			str1[str1.length() - 1] = '1';
+			a = temp.substr(1);
+		}
+	}
+	return str1;
 }

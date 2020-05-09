@@ -42,7 +42,8 @@ public:
 	int GetExponentDec();
 
 	std::string multi2String(std::string, std::string);
-	std::string sum2String(std::string, std::string);
+	static std::string sum2String(std::string, std::string);
+	static std::string divide2String(std::string, std::string);
 	std::string roundbyGroup(std::string);
 };
 
