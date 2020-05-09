@@ -38,7 +38,9 @@ public:
 	int GetExponentDec();
 
 	string multi2String(string, string);
-	string sum2String(string, string);
+	static string sum2String(string, string);
+	static string substract2String(string, string);
+	static string divide2String(string, string);
 	string roundbyGroup(std::string);
 };
 
