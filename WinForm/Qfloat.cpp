@@ -46,7 +46,7 @@ bool Qfloat::GetBit(int i)
 void Qfloat::ScanDecString(std::string dec)
 {
 	ZeroBits();
-	
+
 	// = 0
 	if (isFull0(dec)) return;
 
@@ -59,8 +59,8 @@ void Qfloat::ScanDecString(std::string dec)
 
 	//seperate whole and fractional part
 	int pointIndex = (int)dec.find('.');
-	std::string whole = ""; 
-	std::string fractional = ""; 
+	std::string whole = "";
+	std::string fractional = "";
 
 
 	if (pointIndex == std::string::npos)
@@ -91,7 +91,7 @@ void Qfloat::ScanDecString(std::string dec)
 	if (len1 > 16384)
 	{
 		for (int i = 126; i >= 112; i--) SetBit(i);
-		
+
 		return;
 	}
 
@@ -333,6 +333,8 @@ std::string Qfloat::GetDecString()
 
 	if (GetBit(127)) res = '-' + res;
 
+	//round by group "9999999"
+	res = roundbyGroup(res);
 
 	return res;
 }
@@ -363,7 +365,7 @@ void Qfloat::ScanBinString(std::string s)
 }
 
 
-Qfloat Qfloat::operator + (Qfloat y) 
+Qfloat Qfloat::operator + (Qfloat y)
 {
 	Qfloat z;
 
@@ -392,7 +394,7 @@ Qfloat Qfloat::operator + (Qfloat y)
 	yS.SetBit(112);
 
 	//makes exponents equal
-	while (xE < yE) 
+	while (xE < yE)
 	{
 		++xE;
 		xS = (xS >> 1);
@@ -419,7 +421,7 @@ Qfloat Qfloat::operator + (Qfloat y)
 	{
 		zS = xS + yS;
 	}
-	else 
+	else
 	{
 		if (xS > yS)
 			zS = xS - yS;
@@ -428,7 +430,7 @@ Qfloat Qfloat::operator + (Qfloat y)
 	}
 
 	//significand = 0
-	if (zS.GetDecString() == "0") 
+	if (zS.GetDecString() == "0")
 	{
 		z.ScanDecString("0");
 		return z;
@@ -442,14 +444,14 @@ Qfloat Qfloat::operator + (Qfloat y)
 	for (int i = 113; i >= 0; i--)
 		str = str + std::to_string(zS.GetBit(i));
 
-	if (str[0] == '1') 
+	if (str[0] == '1')
 	{
 		str = "0" + str;
 		str.pop_back();
 		++xE;
 	}
 
-	while (str[1] != '1') 
+	while (str[1] != '1')
 	{
 		str = str + '0';
 		str.erase(str.begin());
@@ -476,7 +478,7 @@ Qfloat Qfloat::operator + (Qfloat y)
 	return z;
 }
 
-Qfloat Qfloat::operator - (Qfloat y) 
+Qfloat Qfloat::operator - (Qfloat y)
 {
 	if (y.GetBit(127))
 		y.OffBit(127);
@@ -486,7 +488,7 @@ Qfloat Qfloat::operator - (Qfloat y)
 	return *this + y;
 }
 
-Qfloat Qfloat::operator * (Qfloat y) 
+Qfloat Qfloat::operator * (Qfloat y)
 {
 	if (this->GetDecString() == "0") return *this;
 
@@ -494,7 +496,7 @@ Qfloat Qfloat::operator * (Qfloat y)
 
 	//exponent handler 
 	//E is Exponents
-	QInt xE, yE, zE; 
+	QInt xE, yE, zE;
 	QInt bias;
 
 	bias.ScanDecString("16383");
@@ -738,16 +740,16 @@ std::string Qfloat::getBitBetween(int j, int i) // j <= i
 
 std::string Qfloat::multi2String(std::string str, std::string str1)
 {
-	int n = str.size(); 
+	int n = str.size();
 	int m = str1.size();
 
 	std::string ans = "";
 
 	for (int i = 0; i < n; i++) ans += "0";
 
-	for (int i = m - 1; i >= 0; i--) 
+	for (int i = m - 1; i >= 0; i--)
 	{
-		if (str1[i] == '1') 
+		if (str1[i] == '1')
 		{
 			ans = sum2String(ans, str);
 		}
@@ -771,7 +773,7 @@ std::string Qfloat::sum2String(std::string str, std::string str1)
 		char ch = str[i];
 		char ck = str1[i];
 
-		if (du == 0) 
+		if (du == 0)
 		{
 			if ((ch == '0') && (ck == '0'))
 			{
@@ -781,15 +783,15 @@ std::string Qfloat::sum2String(std::string str, std::string str1)
 			{
 				ans = "1" + ans;
 			}
-			else 
+			else
 			{
 				ans = "0" + ans;
 				du = 1;
 			}
 		}
-		else 
+		else
 		{
-			if ((ch == '0') && (ck == '0')) 
+			if ((ch == '0') && (ck == '0'))
 			{
 				ans = "1" + ans;
 				du = 0;
@@ -809,13 +811,13 @@ std::string Qfloat::sum2String(std::string str, std::string str1)
 	return ans;
 }
 
-std::string Qfloat::getSign() 
+std::string Qfloat::getSign()
 {
 
 	return GetBit(127) ? "1" : "0";
 }
 
-std::string Qfloat::getExponent() 
+std::string Qfloat::getExponent()
 {
 	std::string s = "";
 
@@ -827,7 +829,7 @@ std::string Qfloat::getExponent()
 	return s;
 }
 
-std::string Qfloat::getSignificand() 
+std::string Qfloat::getSignificand()
 {
 	std::string s = "";
 
@@ -872,4 +874,59 @@ std::string Qfloat::GetQfloat(std::string base)
 		return this->GetDecString();
 
 	return "";
+}
+
+
+std::string Qfloat::roundbyGroup(std::string str) {
+	int cnt9 = 0, index = 0; bool take = 0;
+	int round = 20;
+	std::string bDot = "";
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == '9' && take == 1) {
+			if (cnt9 == 0) index = i;
+			cnt9++;
+		}
+		if (str[i] == '.') take = 1;
+		if (take == 0) bDot = bDot + str[i];
+		if (cnt9 == round) break;
+	}
+
+	if (cnt9 == round) {
+		if (str[index - 1] == '.') {
+			long long temp = stoi(bDot);
+			temp++;
+			return std::to_string(temp);
+		}
+		else {
+			str[index - 1] = char(str[index - 1] + 1);
+			str.erase(str.begin() + index, str.end());
+			return str;
+		}
+	}
+
+	int cnt0 = 0;
+	index = 0, take = 0;
+	bDot = "";
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == '0' && take == 1) {
+			if (cnt0 == 0) index = i;
+			cnt0++;
+		}
+		if (str[i] == '.') take = 1;
+		if (take == 0) bDot = bDot + str[i];
+		if (cnt0 == round) break;
+	}
+
+	if (cnt0 == round) {
+		if (str[index - 1] == '.') {
+			long long temp = stoi(bDot);
+			return std::to_string(temp);
+		}
+		else {
+			str.erase(str.begin() + index, str.end());
+			return str;
+		}
+	}
+
+	return str;
 }

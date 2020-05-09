@@ -288,7 +288,12 @@ string Qfloat::GetDecString()
 		res = whole;
 	if (GetBit(127))
 		res = '-' + res;
+
+	//round by group 9,0
+	res = roundbyGroup(res);
+
 	return res;
+
 }
 
 string Qfloat::GetBinString()// rename Print to getBinString
@@ -725,3 +730,55 @@ int Qfloat::GetExponentDec()
 	return res;
 }
 
+string Qfloat::roundbyGroup(string str) {
+	int cnt9 = 0, index = 0; bool take = 0;
+	std::string bDot = "";
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == '9' && take == 1) {
+			if (cnt9 == 0) index = i;
+			cnt9++;
+		}
+		if (str[i] == '.') take = 1;
+		if (take == 0) bDot = bDot + str[i];
+		if (cnt9 == 20) break;
+	}
+
+	if (cnt9 == 20) {
+		if (str[index - 1] == '.') {
+			long long temp = stoi(bDot);
+			temp++;
+			return std::to_string(temp);
+		}
+		else {
+			str[index - 1] = char(str[index - 1] + 1);
+			str.erase(str.begin() + index, str.end());
+			return str;
+		}
+	}
+
+	int cnt0 = 0;
+	index = 0, take = 0;
+	bDot = "";
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == '0' && take == 1) {
+			if (cnt0 == 0) index = i;
+			cnt0++;
+		}
+		if (str[i] == '.') take = 1;
+		if (take == 0) bDot = bDot + str[i];
+		if (cnt0 == 20) break;
+	}
+
+	if (cnt0 == 20) {
+		if (str[index - 1] == '.') {
+			long long temp = stoi(bDot);
+			return std::to_string(temp);
+		}
+		else {
+			str.erase(str.begin() + index, str.end());
+			return str;
+		}
+	}
+
+	return str;
+}

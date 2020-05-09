@@ -221,10 +221,9 @@ void Main(array<String^>^ args)
 		input->Close();
 	}	
 
-	/*Qfloat a, b;
+	//Qfloat a;
+	//////37.5 23.1
+	//a.ScanDecString("1000.999999999999999999999999999999");
 
-	a.ScanDecString("3480239462.2643114363");
-	b.ScanDecString("1436836209.21515123246");
-
-	std::string z = (a * b).GetDecString();*/
+	//std::string z = a.GetDecString();
 }
