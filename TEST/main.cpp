@@ -192,7 +192,7 @@ int main(int argc, char* argv[])
 
 	Qfloat a;
 	////37.5 23.1
-	a.ScanDecString("1000.999999999999999999999999999999999999921331231");
+	a.ScanDecString("1000.33333333333333333333333333333333333333333333333");
 
 	cout << a.GetDecString();
 
