@@ -1106,7 +1106,7 @@ namespace _18120015_18120019_18120020
 
 		void logicalQFloat(std::string ops)
 		{
-			QFloat A, B;
+			QFloat A, B, C;
 
 			if (Base == "2")
 			{
@@ -1118,6 +1118,8 @@ namespace _18120015_18120019_18120020
 
 			A = RadixQFloatConverter(Param1->Text);
 			B = RadixQFloatConverter(Param2->Text);
+
+			if (B == C && ops == "/") return Answer->Text = "Math Error";
 
 			if (ops == "+") return Answer->Text = GetQFloatSystemString(A + B);
 
@@ -1134,9 +1136,12 @@ namespace _18120015_18120019_18120020
 
 			if (Param1->Text == "" || Param2->Text == "") return;
 
-			QInt A, B;
+			QInt A, B, C;
 			A = RadixQIntConverter(Param1->Text);
 			B = RadixQIntConverter(Param2->Text);
+
+			if (ops == "/" || ops == "%")
+				if (B == C) return Answer->Text = "Math Error";
 
 			if (ops == "+") return Answer->Text = GetQIntSystemString(A + B);
 

@@ -31,6 +31,7 @@ public:
 	QFloat operator - (QFloat);
 	QFloat operator * (QFloat);
 	QFloat operator / (QFloat);
+	bool operator == (QFloat);
 
 	//extra
 	QFloat operator = (const QFloat&);

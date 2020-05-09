@@ -942,3 +942,14 @@ std::string QFloat::roundbyGroup(std::string str)
 
 	return str;
 }
+
+bool QFloat::operator == (QFloat T)
+{
+	for (int i = 127; i >= 0; i--)
+	{
+		if (GetBit(i) != T.GetBit(i))
+			return false;
+	}
+
+	return true;
+}
