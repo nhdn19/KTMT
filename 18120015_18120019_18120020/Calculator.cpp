@@ -6,27 +6,29 @@ using namespace System::Windows::Forms;
 
 // function to interact with QInt
 
-QInt arithmeticQInt(std::string base, std::string x, char o, std::string y)
+std::string arithmeticQInt(std::string base, std::string x, char o, std::string y)
 {
-	QInt a, b;
+	QInt a, b, c;
 
 	a.ScanQInt(x, base);
 	b.ScanQInt(y, base);
 
+	if (o == '/' && b == c) return "Math Error";
+
 	switch (o)
 	{
 	case '+':
-		return (a + b);
+		return (a + b).GetQInt(base);
 	case '-':
-		return (a - b);
+		return (a - b).GetQInt(base);
 	case '*':
-		return (a * b);
+		return (a * b).GetQInt(base);
 	case '/':
-		return (a / b);
+		return (a / b).GetQInt(base);
 	case '%':
-		return (a % b);
+		return (a % b).GetQInt(base);
 	default:
-		return a;
+		return a.GetQInt(base);
 	}
 }
 
@@ -61,6 +63,8 @@ QInt shiftQInt(std::string base, std::string x, std::string o, int k)
 
 	if (o == ">>") return (a >> k);
 	if (o == "<<") return (a << k);
+	if (o == "rol") return (a.rol(k));
+	if (o == "ror") return (a.ror(k));
 
 	return a;
 }
@@ -103,7 +107,7 @@ std::string processQInt(std::string inputString)
 	if (c == "+" || c == "-" || c == "*" || c == "/" || c == "%")
 	{
 		ss >> d;
-		return arithmeticQInt(a, b, c[0], d).GetQInt(a);
+		return arithmeticQInt(a, b, c[0], d);
 	}
 	else if (c == "&" || c == "|" || c == "^")
 	{
@@ -114,14 +118,14 @@ std::string processQInt(std::string inputString)
 	{
 		return logicQInt(a, c, b[0], "").GetQInt(a);
 	}
-	else if (c == "<<" || c == ">>")
+	else if (c == "<<" || c == ">>" || c == "ror" || c == "rol")
 	{
 		ss >> k;
 		return shiftQInt(a, b, c, k).GetQInt(a);
 	}
 	else if (c == "<" || c == ">" || c == "<=" || c == ">=" || c == "==")
 	{
-		ss >> k;
+		ss >> d;
 		return compareQInt(a, b, c, d) ? "True" : "False";
 	}
 	else return convertQInt(a, b, c);
