@@ -1,7 +1,7 @@
 #include "QFloat.h"
 
 
-//check if str contain all 0
+//check if a string contain all 0
 bool isFull0(std::string str)
 {
 	for (int i = 0; i < str.length(); i++)
@@ -10,6 +10,7 @@ bool isFull0(std::string str)
 	return true;
 }
 
+//get the 2s complement of a binary string
 std::string get2sComplement(std::string str)
 {
 	for (int i = 0; i < str.length(); i++)
@@ -18,6 +19,7 @@ std::string get2sComplement(std::string str)
 	return str;
 }
 
+//shift left 2 strings
 void shiftLeft(std::string& str1, std::string& str2)
 {
 	if (str1[0] == '1')
@@ -60,6 +62,7 @@ bool QFloat::GetBit(int i)
 	return bit;
 }
 
+//store a string of decimal real number into QFloat
 void QFloat::ScanDecString(std::string dec)
 {
 	ZeroBits();
@@ -101,8 +104,6 @@ void QFloat::ScanDecString(std::string dec)
 	} while (whole != "0");
 
 	int len1 = wholeBin.length();
-
-
 
 	//infinity
 	if (len1 > 16384)
@@ -185,7 +186,7 @@ void QFloat::ScanDecString(std::string dec)
 	else return; // -> 0
 
 
-	//set exp bit
+	//set exponent bits
 	exp = exp + 16383;
 	if (exp != 0)
 	{
@@ -200,7 +201,7 @@ void QFloat::ScanDecString(std::string dec)
 	}
 
 
-	//set significand bit
+	//set significand bits
 	int i = 111;
 	int len = tempBin.length();
 
@@ -213,6 +214,7 @@ void QFloat::ScanDecString(std::string dec)
 	}
 }
 
+//get a string of decimal value of QFloat
 std::string QFloat::GetDecString()
 {
 	bool isSignificandFull0 = true; //check if all bits in significand are 0
@@ -221,7 +223,6 @@ std::string QFloat::GetDecString()
 		if (GetBit(i)) isSignificandFull0 = false;
 
 	int last1 = 128; //find the last bit 1 of significand
-
 	if (!isSignificandFull0)
 		for (last1 = 0; last1 <= 111; last1++)
 			if (GetBit(last1)) break;
@@ -239,7 +240,7 @@ std::string QFloat::GetDecString()
 		return "Inf";
 	}
 
-	//find binary of whole and fractional part
+	//find binary string of whole and fractional part
 	std::string fractionalBin = ""; //fractional part in binary
 	std::string wholeBin = ""; // whole part in binary
 
@@ -598,6 +599,7 @@ QFloat QFloat::operator * (QFloat y)
 	return z;
 }
 
+//arithmetic operator /
 QFloat QFloat::operator / (QFloat y)
 {
 	//x = 0 -> return 0
@@ -653,8 +655,8 @@ QFloat QFloat::operator / (QFloat y)
 		xExp--;
 	}
 
-	std::string zSigBin = divide2String(xSig, ySig);
-	int zExp = xExp - yExp;
+	std::string zSigBin = divide2String(xSig, ySig); //divide two significands
+	int zExp = xExp - yExp; //substract two exponents
 	while (zSigBin[0] == '0')
 		zSigBin = zSigBin.substr(1);
 	if (zSigBin != "")
@@ -687,6 +689,8 @@ QFloat QFloat::operator / (QFloat y)
 	}
 	else
 		return QFloat();
+
+	//set bits to result
 	if (zExp > 0)
 	{
 		QInt exp;
@@ -835,6 +839,7 @@ std::string QFloat::getSignificand()
 	return s;
 }
 
+//get decimal value of exponent part
 int QFloat::GetExponentDec()
 {
 	int res = 0;
@@ -924,6 +929,7 @@ bool QFloat::operator == (QFloat T)
 	return true;
 }
 
+//divide 2 binary strings
 std::string QFloat::divide2String(std::string str1, std::string str2)
 {
 	std::string a = "";

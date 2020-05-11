@@ -22,37 +22,37 @@ public:
 
 	void ScanBinString(std::string);
 	void ScanDecString(std::string);
-	void ScanHexString(std::string); // duong done, all tested
+	void ScanHexString(std::string);
 	void ScanQInt(std::string, std::string);
 
-	std::string GetBinString(); // tested work on both negative 
-	std::string GetDecString(); // tested work on both nagative
-	std::string GetHexString(); // dat
+	std::string GetBinString();
+	std::string GetDecString(); 
+	std::string GetHexString(); 
 	std::string GetQInt(std::string);
 
-	QInt operator ++ (); // dung done
-	QInt operator + (QInt); // duong done, dung tested
-	QInt operator - (QInt); // duong done, dung tested
-	QInt operator * (QInt); // nhdung, slight tested
-	QInt operator / (QInt); // nhdung, tested with 7/3
+	QInt operator ++ (); 
+	QInt operator + (QInt); 
+	QInt operator - (QInt); 
+	QInt operator * (QInt); 
+	QInt operator / (QInt); 
 	QInt operator % (QInt);
 	QInt operator = (const QInt&);
-	QInt operator = (const std::string); // for only decimal 
+	QInt operator = (const std::string); 
 
-	QInt operator & (QInt&); // duong tested, done
-	QInt operator | (QInt&); // duong tested, done
-	QInt operator ^ (QInt&); // duong tested, done
-	QInt operator ~ (); // duong tested, done
+	QInt operator & (QInt&); 
+	QInt operator | (QInt&); 
+	QInt operator ^ (QInt&); 
+	QInt operator ~ (); 
 
-	QInt operator>> (int); // dat
-	QInt operator<< (int); // dat
+	QInt operator>> (int); 
+	QInt operator<< (int); 
 
-	QInt rol(int); // nhdung
-	QInt ror(int); // nhdung
+	QInt rol(int); 
+	QInt ror(int); 
 
-	bool operator < (QInt); // dat
-	bool operator > (QInt); // dat
-	bool operator <= (QInt); // dat
+	bool operator < (QInt); 
+	bool operator > (QInt); 
+	bool operator <= (QInt); 
 	bool operator >= (QInt);
 	bool operator == (QInt);
 };
