@@ -6,6 +6,8 @@ using namespace System::Windows::Forms;
 
 // function to interact with QInt
 
+
+// handle arithmetic operation of QInt
 std::string arithmeticQInt(std::string base, std::string x, char o, std::string y)
 {
 	QInt a, b, c;
@@ -32,6 +34,7 @@ std::string arithmeticQInt(std::string base, std::string x, char o, std::string 
 	}
 }
 
+// handle logical operation of QInt
 QInt logicQInt(std::string base, std::string x, char o, std::string y)
 {
 	QInt a, b;
@@ -55,6 +58,7 @@ QInt logicQInt(std::string base, std::string x, char o, std::string y)
 	}
 }
 
+// handle shift operation of QInt
 QInt shiftQInt(std::string base, std::string x, std::string o, int k)
 {
 	QInt a;
@@ -69,6 +73,7 @@ QInt shiftQInt(std::string base, std::string x, std::string o, int k)
 	return a;
 }
 
+// handle comparison operation of QInt
 bool compareQInt(std::string base, std::string x, std::string o, std::string y)
 {
 	QInt a, b;
@@ -85,6 +90,7 @@ bool compareQInt(std::string base, std::string x, std::string o, std::string y)
 	return 0;
 }
 
+// convert QInt form type a to type b
 std::string convertQInt(std::string a, std::string b, std::string x)
 {
 	QInt Q;
@@ -94,6 +100,7 @@ std::string convertQInt(std::string a, std::string b, std::string x)
 	return Q.GetQInt(b);
 }
 
+// map each case of input string to specific function
 std::string processQInt(std::string inputString)
 {
 	QInt ans;
@@ -135,6 +142,8 @@ std::string processQInt(std::string inputString)
 
 // function to interact with QFloat
 
+
+// handle arithmetic operation of QFloat
 QFloat arithmeticQFloat(std::string base, std::string x, char o, std::string y)
 {
 	QFloat a, b;
@@ -157,6 +166,7 @@ QFloat arithmeticQFloat(std::string base, std::string x, char o, std::string y)
 	}
 }
 
+// convert QFloat from type a to type b
 std::string convertQFloat(std::string a, std::string b, std::string x)
 {
 	QFloat Q;
@@ -166,6 +176,7 @@ std::string convertQFloat(std::string a, std::string b, std::string x)
 	return Q.GetQFloat(b);
 }
 
+// map each case of input string to specific function
 std::string processQFloat(std::string inputString)
 {
 	QFloat ans;
@@ -184,7 +195,7 @@ std::string processQFloat(std::string inputString)
 	else return convertQFloat(a, b, c);
 }
 
-
+// convert from system input stream to std string for process and then reconvert
 void proStream(StreamReader^ input, StreamWriter^ output, std::string(*processQ)(std::string))
 {
 	while (1)
@@ -216,8 +227,8 @@ void Main(array<String^>^ args)
 	}
 	else
 	{
-		StreamReader^ input = gcnew StreamReader(args[0]);
-		StreamWriter^ output = gcnew StreamWriter(args[1]);
+		StreamReader^ input = gcnew StreamReader(args[0]); // read file name of input file
+		StreamWriter^ output = gcnew StreamWriter(args[1]); // read file name of output file
 
 		if (args[2] == "1") proStream(input, output, processQInt);
 		if (args[2] == "2") proStream(input, output, processQFloat);
