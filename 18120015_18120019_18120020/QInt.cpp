@@ -1,7 +1,7 @@
 #include "QInt.h"
 
-
-int divideBy2(std::string& str) // divide decimal string by 2, return remainder
+// divide decimal string by 2, return remainder
+int divideBy2(std::string& str) 
 {
 	if (str == "0") return 0;
 
@@ -24,7 +24,8 @@ int divideBy2(std::string& str) // divide decimal string by 2, return remainder
 	return remainder;
 }
 
-void multiplyBy2(std::string& str) // mulitply decimal string by 2
+// mulitply decimal string by 2
+void multiplyBy2(std::string& str) 
 {
 	int carry = 0;
 	std::string product = "";
@@ -41,7 +42,8 @@ void multiplyBy2(std::string& str) // mulitply decimal string by 2
 	str = product;
 }
 
-void add1ToString(std::string& str) // + 1 vao chuoi so thap phan
+// add 1 to decimal string
+void add1ToString(std::string& str) 
 {
 	for (int i = str.length() - 1; i >= 0; i--)
 	{
@@ -148,10 +150,11 @@ std::string QInt::GetBinString()
 	return s;
 }
 
+//store a string of decimal number into QInt
 void QInt::ScanDecString(std::string s)
 {
 	ZeroBits();
-
+	//check if negative
 	bool isNegative = false;
 
 	if (s[0] == '-')
@@ -171,6 +174,7 @@ void QInt::ScanDecString(std::string s)
 	if (isNegative) *this = ++(~(*this));
 }
 
+//get a string of decimal value of QInt
 std::string QInt::GetDecString()
 {
 	bool isNegative = false;
@@ -187,8 +191,9 @@ std::string QInt::GetDecString()
 
 	int i = size - 1; // loop from msb
 
-	while (ans.GetBit(i) == 0 && i >= 0) i--;
+	while (ans.GetBit(i) == 0 && i >= 0) i--; //find the first bit 1 from msb
 
+	//x2 result every loop, if bit 1 then +1 to result
 	for (i; i >= 0; i--)
 	{
 		multiplyBy2(res);
@@ -507,23 +512,25 @@ QInt QInt::operator ~ ()
 
 // shift operator
 
+//shift right operator
 QInt QInt::operator >> (int k)
 {
 	bool msb = GetBit(size - 1);
 
 	QInt temp;
 
-	//xu li truong hop dich phai qua sizebit
-
-	if (msb && k >= size)
+	//inedaquate k
+	if (k < 1)
+		return *this;
+	if (k >= size)
 	{
-		for (int i = 0; i < 127; i++)
-			temp.SetBit(i);
-
+		if (msb)
+			for (int i = 0; i < 127; i++)
+				temp.SetBit(i);
 		return temp;
 	}
 
-	//bat dau xu li
+	//
 
 	int i = 0;
 
@@ -541,11 +548,13 @@ QInt QInt::operator >> (int k)
 	return temp;
 }
 
+//shift left operator
 QInt QInt::operator << (int k)
 {
 	QInt temp;
 
 	if (k >= size) return temp;
+	if (k < 1) return *this;
 
 	for (int i = size - 1; i >= k; i--)
 		if (GetBit(i - k)) temp.SetBit(i);
@@ -589,14 +598,17 @@ QInt QInt::rol(int k)
 }
 // comparison operator
 
+//operator <
 bool QInt::operator < (QInt T)
 {
-	bool msbx = GetBit(size - 1);
-	bool msby = T.GetBit(size - 1);
+	bool msbx = GetBit(size - 1); //msb of x
+	bool msby = T.GetBit(size - 1); //msb of y
 
+	//compare 2 msb
 	if (msbx > msby) return true;
 	if (msbx < msby) return false;
 
+	//find the 2 first different bits from msb then compare
 	for (int i = size - 2; i >= 0; i--)
 	{
 		bool bitx = GetBit(i);
@@ -608,13 +620,13 @@ bool QInt::operator < (QInt T)
 	return false;
 }
 
-
+//operator >
 bool QInt::operator > (QInt T)
 {
 	return !(*this <= T);
 }
 
-
+//operator <=
 bool QInt::operator <= (QInt T)
 {
 	bool msbx = GetBit(size - 1);
@@ -634,13 +646,13 @@ bool QInt::operator <= (QInt T)
 	return true;
 }
 
-
+//operator >=
 bool QInt::operator >= (QInt T)
 {
 	return !(*this < T);
 }
 
-
+//operator ==
 bool QInt::operator == (QInt T)
 {
 	for (int i = 127; i >= 0; i--)
