@@ -200,6 +200,7 @@ std::string QInt::GetDecString()
 	return res;
 }
 
+//handle scan a hex string, convert it to bit, and set to data
 void QInt::ScanHexString(std::string s)
 {
 	ZeroBits();
@@ -322,13 +323,14 @@ QInt QInt::operator ++ ()
 	return *this;
 }
 
+//opeartor + two QInt return Qint
 QInt QInt::operator + (QInt T)
 {
 	int c = 0;
 	int x, y;
 
 	QInt sum;
-
+	//sum each bit from right to left 
 	for (int i = 0; i < size; i++)
 	{
 		x = GetBit(i), y = T.GetBit(i);
@@ -343,6 +345,7 @@ QInt QInt::operator + (QInt T)
 	return sum;
 }
 
+//opeartor - two QInt return Qint
 QInt QInt::operator - (QInt T)
 {
 	QInt revs = ++(~T);
@@ -460,7 +463,7 @@ QInt QInt::operator = (const std::string T)
 
 
 // logic operator
-
+//opeartor & two QInt, return QInt
 QInt QInt::operator & (QInt& T)
 {
 	QInt ans;
@@ -472,6 +475,7 @@ QInt QInt::operator & (QInt& T)
 	return ans;
 }
 
+//opeartor ^ two QInt, return QInt
 QInt QInt::operator ^ (QInt& T)
 {
 	QInt ans;
@@ -483,7 +487,7 @@ QInt QInt::operator ^ (QInt& T)
 	return ans;
 }
 
-
+//opeartor | two QInt, return QInt
 QInt QInt::operator | (QInt& T)
 {
 	QInt ans;
@@ -495,6 +499,7 @@ QInt QInt::operator | (QInt& T)
 	return ans;
 }
 
+//opeartor ~ two QInt, return QInt
 QInt QInt::operator ~ ()
 {
 	QInt ans;
