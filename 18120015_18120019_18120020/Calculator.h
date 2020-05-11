@@ -729,6 +729,7 @@ namespace _18120015_18120019_18120020
 		{
 		}
 
+		// convert any system string on screen to QInt for process
 		QInt RadixQIntConverter(String^ input)
 		{
 			QInt Q;
@@ -742,6 +743,7 @@ namespace _18120015_18120019_18120020
 			return Q;
 		}
 
+		// convert any system string on screen to QFloat for process
 		QFloat RadixQFloatConverter(String^ input)
 		{
 			QFloat Q;
@@ -755,6 +757,7 @@ namespace _18120015_18120019_18120020
 			return Q;
 		}
 
+		// reconvert from QInt to system string to display on textbox
 		String^ GetQIntSystemString(QInt Q)
 		{
 			marshal_context context;
@@ -764,6 +767,7 @@ namespace _18120015_18120019_18120020
 			return gcnew String(Q.GetQInt(b).c_str());
 		}
 
+		// reconvert from QFloat to system string to display on textbox
 		String^ GetQFloatSystemString(QFloat Q)
 		{
 			marshal_context context;
@@ -773,6 +777,7 @@ namespace _18120015_18120019_18120020
 			return gcnew String(Q.GetQFloat(b).c_str());
 		}
 
+		// disable all the char button first and then enable base on current type of number
 		void ButtonControl()
 		{
 			ButtonA->Enabled = false;
@@ -833,6 +838,7 @@ namespace _18120015_18120019_18120020
 			}
 		}
 
+		// enable math operation button base on current type of number
 		System::Void DataType_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e)
 		{
 			bool isEnable = true;
@@ -863,6 +869,7 @@ namespace _18120015_18120019_18120020
 			LessThanButton->Enabled = isEnable;
 		}
 
+		// display conversion of operands base on selected type of QFloat
 		void RadioBox_QFloat()
 		{
 			QFloat A, B, C;
@@ -886,6 +893,8 @@ namespace _18120015_18120019_18120020
 			if (Answer->Text != "") Answer->Text = GetQFloatSystemString(C);
 		}
 
+
+		// display conversion of operands base on selected type of QInt
 		System::Void RadixBox_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e)
 		{
 			if (DataType->Text == "QFloat") return RadioBox_QFloat();
@@ -906,6 +915,7 @@ namespace _18120015_18120019_18120020
 			if (Answer->Text != "") Answer->Text = GetQIntSystemString(C);
 		}
 
+		// get last number of the current operand being input
 		wchar_t lastChar()
 		{
 			if (isFocusedBox1)
@@ -925,6 +935,7 @@ namespace _18120015_18120019_18120020
 			return ' ';
 		}
 
+		// if no floating point has entered -> allow using dot button 
 		bool hasNoFloating()
 		{
 			if (isFocusedBox1)
@@ -946,6 +957,7 @@ namespace _18120015_18120019_18120020
 			return false;
 		}
 
+		// control which key on keyboard can be used base of number type
 		void Param_KeyPressed(System::Windows::Forms::KeyPressEventArgs^ e)
 		{
 			if (DataType->Text == "QFloat" && RadixBox->Text == "DEC")
@@ -983,6 +995,7 @@ namespace _18120015_18120019_18120020
 			Param_KeyPressed(e);
 		}
 
+		// switch the operand for input
 		void focusBox(bool box1, bool box2)
 		{
 			isFocusedBox1 = box1;
@@ -1011,6 +1024,7 @@ namespace _18120015_18120019_18120020
 		{
 		}
 
+		// add new char number to operand base on button clicked
 		void AppendTextbox(char c)
 		{
 			if (isFocusedBox1)
@@ -1104,6 +1118,7 @@ namespace _18120015_18120019_18120020
 			Answer->Text = "";
 		}
 
+		// handle system string conversion and calling math operation on QFloat
 		void logicalQFloat(std::string ops)
 		{
 			QFloat A, B, C;
@@ -1130,6 +1145,7 @@ namespace _18120015_18120019_18120020
 			if (ops == "/") return Answer->Text = GetQFloatSystemString(A / B);
 		}
 
+		// handle system string conversion and calling math operation on QInt
 		void logicalProcess(std::string ops)
 		{
 			if (DataType->Text == "QFloat") return logicalQFloat(ops);
@@ -1250,6 +1266,7 @@ namespace _18120015_18120019_18120020
 			return true;
 		}
 
+		// convert from system string to int
 		int IntConverter(String^ input)
 		{
 			marshal_context context;
@@ -1263,6 +1280,7 @@ namespace _18120015_18120019_18120020
 			return k < 0 ? -1 : k;
 		}
 
+		// handle left shift for QInt
 		System::Void LeftShift_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
@@ -1281,6 +1299,7 @@ namespace _18120015_18120019_18120020
 			Answer->Text = GetQIntSystemString(A << B);
 		}
 
+		// handle right shift for QInt
 		System::Void RightShift_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
@@ -1299,6 +1318,7 @@ namespace _18120015_18120019_18120020
 			Answer->Text = GetQIntSystemString(A >> B);
 		}
 
+		// handle left rotation for QInt
 		System::Void RotateLeft_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
@@ -1317,6 +1337,7 @@ namespace _18120015_18120019_18120020
 			Answer->Text = GetQIntSystemString(A.rol(B));
 		}
 
+		// handle right rotation for QInt
 		System::Void RotateRight_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			if (Param1->Text == "" || Param2->Text == "") return;
