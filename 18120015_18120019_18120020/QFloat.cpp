@@ -357,6 +357,7 @@ std::string QFloat::GetDecString()
 	return res;
 }
 
+//handle a bin string, convert it to bit, and set to data
 std::string QFloat::GetBinString()// rename Print to getBinString
 {
 	std::string ans = "";
@@ -368,7 +369,7 @@ std::string QFloat::GetBinString()// rename Print to getBinString
 }
 
 ///////////////////////////////////////
-
+//handle scan a bin string, convert it to bit, and set to data
 void QFloat::ScanBinString(std::string s)
 {
 	ZeroBits();
@@ -382,7 +383,7 @@ void QFloat::ScanBinString(std::string s)
 	}
 }
 
-
+//opearator +: sum two Qfloat, return Qfloat
 QFloat QFloat::operator + (QFloat y)
 {
 	QFloat z;
@@ -425,7 +426,7 @@ QFloat QFloat::operator + (QFloat y)
 		++yE;
 		yS = (yS >> 1);
 		if (yS.GetDecString() == "0")
-			return y;
+			return *this;
 	}
 
 	//isNegative
@@ -455,7 +456,17 @@ QFloat QFloat::operator + (QFloat y)
 	}
 
 	//significand overflow?
-
+	QInt zero;
+	zero.ScanDecString("0");
+	if ((zS > zero && xS < zero && yS < zero) || (zS<zero && xS>zero && yS > zero)) {//significand is overflow
+		zS = (zS >> 1);
+		++xE;
+		if (xE > bias) {
+			for (int i = 126; i > 111; i--)
+				z.SetBit(i);
+			return z;//inf
+		}
+	}
 	//while until significant's form : 01.....
 	std::string str = "";
 
@@ -496,16 +507,20 @@ QFloat QFloat::operator + (QFloat y)
 	return z;
 }
 
+//operator -: substract two Qfloat, return Qfloat
 QFloat QFloat::operator - (QFloat y)
 {
+	//toggle sign
 	if (y.GetBit(127))
 		y.OffBit(127);
 	else
 		y.SetBit(127);
 
+	//sum x with toggle sign y
 	return *this + y;
 }
 
+//opeartor *: multi two Qfloat, return Qfloat
 QFloat QFloat::operator * (QFloat y)
 {
 	if (this->GetDecString() == "0") return *this;
@@ -515,14 +530,25 @@ QFloat QFloat::operator * (QFloat y)
 	//exponent handler 
 	//E is Exponents
 	QInt xE, yE, zE;
-	QInt bias;
-
+	QInt bias,negbias;
+	QFloat z;	
 	bias.ScanDecString("16383");
+	negbias.ScanDecString("-16384");
 	xE.ScanBinString(this->getExponent());
 	yE.ScanBinString(y.getExponent());
 
-	zE = xE + yE - bias;
+	zE = xE + yE - bias - bias;
+	//overflow and underflow
+	if (zE > bias) {//overflow
+		for (int i = 126; i > 111; i--)
+			z.SetBit(i);
+		return z; //infinity
+	}
+	else if (zE < negbias) {
+		return z; //0
+	}
 
+	zE = zE + bias;
 	//significand handler
 	QInt xS, yS, zS;
 	std::string xS_str, yS_str;
@@ -594,7 +620,6 @@ QFloat QFloat::operator * (QFloat y)
 	while (ans.size() < 128) ans += "0";
 
 
-	QFloat z;
 	z.ScanBinString(ans);
 	return z;
 }
@@ -722,6 +747,7 @@ QFloat QFloat::operator = (const QFloat& T)
 	return *this;
 }
 
+//Handle get bit between i and j
 std::string QFloat::getBitBetween(int j, int i) // j <= i
 {
 	std::string ans;
@@ -732,6 +758,7 @@ std::string QFloat::getBitBetween(int j, int i) // j <= i
 	return ans;
 }
 
+//Multi 2 Bit string, retrun a new string
 std::string QFloat::multi2String(std::string str, std::string str1)
 {
 	int n = str.size();
@@ -753,6 +780,7 @@ std::string QFloat::multi2String(std::string str, std::string str1)
 	return ans;
 }
 
+//Sum 2 Bit string, return a new string
 std::string QFloat::sum2String(std::string str, std::string str1)
 {
 
@@ -809,12 +837,14 @@ std::string QFloat::sum2String(std::string str, std::string str1)
 	return ans;
 }
 
+//Get Bit 127 is Sign
 std::string QFloat::getSign()
 {
 
 	return GetBit(127) ? "1" : "0";
 }
 
+//Get Bit from 126 - 112 is Exponent
 std::string QFloat::getExponent()
 {
 	std::string s = "";
@@ -827,6 +857,7 @@ std::string QFloat::getExponent()
 	return s;
 }
 
+//Get Bit from 111 - 0 is Significand
 std::string QFloat::getSignificand()
 {
 	std::string s = "";
@@ -877,7 +908,7 @@ std::string QFloat::GetQFloat(std::string base)
 
 std::string QFloat::roundbyGroup(std::string str) 
 {
-	str.resize(30);
+	str.resize(40);
 	int cnt9 = 0, cnt0 = 0, index = 0, round = 10;
 	bool take = 0;
 	std::string bDot = "";

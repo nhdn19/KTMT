@@ -19,7 +19,7 @@ string get2sComplement(string str)
 	return str;
 }
 
-void shiftLeft(string &str1, string &str2)
+void shiftLeft(string& str1, string& str2)
 {
 	if (str1[0] == '1')
 		str1 = str1 + str2[0];
@@ -375,7 +375,7 @@ Qfloat Qfloat::operator+(Qfloat y) {
 		++yE;
 		yS = (yS >> 1);
 		if (yS.GetDecString() == "0")
-			return y;
+			return *this;
 	}
 
 	//isNegative
@@ -400,6 +400,17 @@ Qfloat Qfloat::operator+(Qfloat y) {
 	}
 
 	//significand overflow?
+	QInt zero;
+	zero.ScanDecString("0");
+	if ((zS > zero && xS < zero && yS < zero) || (zS<zero && xS>zero && yS > zero)) {//significand is overflow
+		zS = (zS >> 1);
+		++xE;
+		if (xE > bias) {
+			for (int i = 126; i > 111; i--)
+				z.SetBit(i);
+			return z;//inf
+		}
+	}
 
 	//while until significant's form : 01.....
 	string str = "";
@@ -443,13 +454,26 @@ Qfloat Qfloat::operator*(Qfloat y) {
 
 	//exponent handler 
 	QInt xE, yE, zE;//E is Exponents
-	QInt bias;
+	QInt bias,negbias;
+	Qfloat z;
 	bias.ScanDecString("16383");
+	negbias.ScanDecString("-16384");
 	xE.ScanBinString(this->getExponent());
 	yE.ScanBinString(y.getExponent());
 
-	zE = xE + yE - bias;
+	zE = xE + yE - bias - bias;
+	//overflow and underflow
 
+	if (zE > bias) {//overflow
+		for (int i = 126; i > 111; i--)
+			z.SetBit(i);
+		return z; //infinity
+	}
+	else if (zE < negbias) {
+		return z; //0
+	}
+
+	zE = zE + bias;
 	//significand handler
 	QInt xS, yS, zS;
 	string xS_str, yS_str;
@@ -510,7 +534,6 @@ Qfloat Qfloat::operator*(Qfloat y) {
 
 	while (ans.size() < 128)
 		ans += "0";
-	Qfloat z;
 	z.ScanBinString(ans);
 	return z;
 
@@ -768,7 +791,7 @@ int Qfloat::GetExponentDec()
 }
 
 std::string Qfloat::roundbyGroup(std::string str) {
-	str.resize(30);
+	str.resize(100);
 	int cnt9 = 0, cnt0 = 0, index = 0, round = 10;
 	bool take = 0;
 	std::string bDot = "";
