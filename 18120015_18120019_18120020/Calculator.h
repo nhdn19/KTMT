@@ -882,7 +882,7 @@ namespace _18120015_18120019_18120020
 
 			if (Param1->Text != "") A = RadixQFloatConverter(Param1->Text);
 			if (Param2->Text != "") B = RadixQFloatConverter(Param2->Text);
-			if (Answer->Text != "") C = RadixQFloatConverter(Answer->Text);
+			if (Answer->Text != "" && Answer->Text != "Math Error") C = RadixQFloatConverter(Answer->Text);
 
 			if (RadixBox->Text == "BIN") Base = "2";
 			if (RadixBox->Text == "DEC") Base = "10";
@@ -890,7 +890,7 @@ namespace _18120015_18120019_18120020
 
 			if (Param1->Text != "") Param1->Text = GetQFloatSystemString(A);
 			if (Param2->Text != "") Param2->Text = GetQFloatSystemString(B);
-			if (Answer->Text != "") Answer->Text = GetQFloatSystemString(C);
+			if (Answer->Text != "" && Answer->Text != "Math Error") Answer->Text = GetQFloatSystemString(C);
 		}
 
 
@@ -903,7 +903,7 @@ namespace _18120015_18120019_18120020
 
 			if (Param1->Text != "") A = RadixQIntConverter(Param1->Text);
 			if (Param2->Text != "") B = RadixQIntConverter(Param2->Text);
-			if (Answer->Text != "") C = RadixQIntConverter(Answer->Text);
+			if (Answer->Text != "" && Answer->Text != "Math Error") C = RadixQIntConverter(Answer->Text);
 
 			if (RadixBox->Text == "BIN") Base = "2";
 			if (RadixBox->Text == "DEC") Base = "10";
@@ -912,7 +912,7 @@ namespace _18120015_18120019_18120020
 
 			if (Param1->Text != "") Param1->Text = GetQIntSystemString(A);
 			if (Param2->Text != "") Param2->Text = GetQIntSystemString(B);
-			if (Answer->Text != "") Answer->Text = GetQIntSystemString(C);
+			if (Answer->Text != "" && Answer->Text != "Math Error") Answer->Text = GetQIntSystemString(C);
 		}
 
 		// get last number of the current operand being input
