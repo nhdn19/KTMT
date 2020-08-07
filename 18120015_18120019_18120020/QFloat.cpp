@@ -235,9 +235,9 @@ std::string QFloat::GetDecString()
 	{
 		if (!isSignificandFull0) return "NaN";
 
-		if (GetBit(127)) return "-Inf";
+		if (GetBit(127)) return "-infinity";
 
-		return "Inf";
+		return "infinity";
 	}
 
 	//find binary string of whole and fractional part
@@ -251,13 +251,7 @@ std::string QFloat::GetDecString()
 		if (isSignificandFull0) return "0";
 
 		//denormalized
-		for (int i = 0; i < 16382; i++)
-			fractionalBin += '0';
-
-		for (int i = 111; i >= last1; i--)
-			fractionalBin += char(GetBit(i) + '0');
-
-		wholeBin = "0";
+		return "denormalized";
 	}
 	else
 	{

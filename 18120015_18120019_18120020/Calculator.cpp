@@ -133,7 +133,7 @@ std::string processQInt(std::string inputString)
 	else if (c == "<" || c == ">" || c == "<=" || c == ">=" || c == "==")
 	{
 		ss >> d;
-		return compareQInt(a, b, c, d) ? "True" : "False";
+		return compareQInt(a, b, c, d) ? "true" : "false";
 	}
 	else return convertQInt(a, b, c);
 
